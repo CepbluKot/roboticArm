@@ -3,17 +3,17 @@ import canalystii
 
 # Connect to the Canalyst-II device
 # Passing a bitrate to the constructor causes both channels to be initialized and started.
-dev = canalystii.CanalystDevice(bitrate=500000, device_index=0)
+dev = canalystii.CanalystDevice(bitrate=1000000, device_index=0)
 
 # Receive all pending messages on channel 0
 
 
 # The canalystii.Message class is a ctypes Structure, to minimize overhead
-new_message = canalystii.Message(can_id=1,
+new_message = canalystii.Message(can_id=0x401,
                                  remote=False,
                                  extended=False,
                                  data_len=7,
-                                 data=(0x0F,0x00,0x03,0x58,0x02,0x00,0x00))
+                                 data=(0x0F,0x00,0x03,0x00,0x00,0x00,0x00))
 # Send one copy to channel 1
 dev.send(0, new_message)
 # Send 3 copies to channel 0
