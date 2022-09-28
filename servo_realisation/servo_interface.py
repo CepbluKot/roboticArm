@@ -1,120 +1,148 @@
-from abc import ABC
+import abc
 
+# to - do
 
-
-# to -do 
-
-# create base class and use it ads aprent class
+# create base class and use it as parent class
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class servo_interface(ABC):
-    # absolute_positon_mode
+class ServoInterface(abc.ABC):
+    servo_id: int
 
+
+class ServoSdoAbsolutePositionModeInterface(abc.ABC):
+    @abc.abstractmethod
     def control_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def working_mode(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def actual_position(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def trapezoidal_speed(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def trapezoidal_acceleration(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def control_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def location_cache(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def status_word_read(self) -> str:
-        pass
+        raise NotImplemented
 
-    #relative position mode
 
+class ServoSdoRelativePositionModeInterface(abc.ABC):
+    @abc.abstractmethod
     def control_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def working_mode(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def actual_position(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def trapezoidal_speed(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def trapezoidal_acceleration(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def control_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def location_cache(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def status_word_read(self) -> str:
-        pass
+        raise NotImplemented
 
-    # speed mode
 
+class ServoSdoSpeedModeInterface(abc.ABC):
+    @abc.abstractmethod
     def working_mode(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def speed_mode(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def control_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def status_word(self) -> str:
-        pass
+        raise NotImplemented
 
-    # pdo position maode - control proces of finding th origin
 
+class ServoPdoControlTheProcessOfFindingTheOriginInterface(abc.ABC):
+    @abc.abstractmethod
     def find_the_origin(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def working_mode(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def status_word(self) -> str:
-        pass
-    
-    # position mode
+        raise NotImplemented
 
+
+class ServoPdoPositionModeInterface(abc.ABC):
+    @abc.abstractmethod
     def find_the_origin(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def target_position_trapezoidal_velocity_current_position_status_word(self) -> str:
-        pass
+        raise NotImplemented
 
-    def control_word_working_mode_target_position_current_position_status_word(self) -> str:
-        pass
+    @abc.abstractmethod
+    def control_word_working_mode_target_position_current_position_status_word(
+        self,
+    ) -> str:
+        raise NotImplemented
 
-    def target_position_trapezoidal_velocity_current_position_status_word(self) -> str:
-        pass
-    
-    # speed mode
 
-    def control_word_working_mode_target_speed_current_position_status_word(self) -> str:
-        pass
+class ServoPdoSpeedModeInterface(abc.ABC):
+    @abc.abstractmethod
+    def control_word_working_mode_target_speed_current_position_status_word(
+        self,
+    ) -> str:
+        raise NotImplemented
 
-    def control_word_working_mode_target_speed_current_position_status_word(self) -> str:
-        pass
 
-    # position interpolation mode
-
+class ServoPdoPositionInterpolationModeInterface(abc.ABC):
+    @abc.abstractmethod
     def destination_location(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def current_position_status_word(self) -> str:
-        pass
+        raise NotImplemented
 
+    @abc.abstractmethod
     def target_location(self) -> str:
-        pass
+        raise NotImplemented

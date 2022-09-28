@@ -9,11 +9,13 @@ dev = canalystii.CanalystDevice(bitrate=1000000, device_index=0)
 
 
 # The canalystii.Message class is a ctypes Structure, to minimize overhead
-new_message = canalystii.Message(can_id=0x401,
-                                 remote=False,
-                                 extended=False,
-                                 data_len=7,
-                                 data=(0x0F,0x00,0x03,0x00,0x00,0x00,0x00))
+new_message = canalystii.Message(
+    can_id=0x401,
+    remote=False,
+    extended=False,
+    data_len=7,
+    data=(0x0F, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00),
+)
 # Send one copy to channel 1
 dev.send(0, new_message)
 # Send 3 copies to channel 0
