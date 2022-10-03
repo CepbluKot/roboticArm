@@ -7,7 +7,7 @@ from servo_realisation import servo_interface
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class ServoAbstraction:
+class ServoAbstraction():
     servo_id: int
 
 
