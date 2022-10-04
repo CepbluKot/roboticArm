@@ -129,7 +129,7 @@ class ServoPdoAbsolutePositionModeInterface(abc.ABC):
 class ServoPdoSpeedModeInterface(abc.ABC):
     @abc.abstractmethod
     def control_word_working_mode_target_speed_current_position_status_word(
-        self,
+        self, speed: int
     ) -> str:
         raise NotImplemented
 

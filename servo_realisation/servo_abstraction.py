@@ -20,10 +20,10 @@ class ServoSdoAbsolutePositionModeAbstraction(
         )
 
     def control_word_1(self) -> str:
-        return self.servo_sdo_absolute_position_mode_interface.control_word()
+        return self.servo_sdo_absolute_position_mode_interface.control_word_1()
     
     def control_word_2(self) -> str:
-        return self.servo_sdo_absolute_position_mode_interface.control_word()
+        return self.servo_sdo_absolute_position_mode_interface.control_word_2()
 
     def working_mode(self) -> str:
         return self.servo_sdo_absolute_position_mode_interface.working_mode()
@@ -172,10 +172,10 @@ class ServoPdoSpeedModeAbstraction(servo_interface.ServoPdoSpeedModeInterface):
         self.servo_pdo_speed_mode_interface = servo_pdo_speed_mode_interface
 
     def control_word_working_mode_target_speed_current_position_status_word(
-        self,
+        self, speed: int
     ) -> str:
         return (
-            self.servo_pdo_speed_mode_interface.control_word_working_mode_target_speed_current_position_status_word()
+            self.servo_pdo_speed_mode_interface.control_word_working_mode_target_speed_current_position_status_word(speed=speed)
         )
 
 
