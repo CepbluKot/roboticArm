@@ -1,4 +1,3 @@
-import abc
 from servo_realisation import servo_interface
 
 # to - do
@@ -7,11 +6,14 @@ from servo_realisation import servo_interface
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class ServoAbstraction():
-    servo_id: int
+class ServoAbstraction(servo_interface.ServoInterface):
+    def __init__(self, servo: servo_interface.ServoInterface) -> None:
+        self.device_id = servo.device_id
 
 
-class ServoSdoAbsolutePositionModeAbstraction:
+class ServoSdoAbsolutePositionModeAbstraction(
+    servo_interface.ServoSdoAbsolutePositionModeInterface
+):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -49,7 +51,9 @@ class ServoSdoAbsolutePositionModeAbstraction:
         return self.servo_sdo_absolute_position_mode_interface.status_word_read()
 
 
-class ServoSdoRelativePositionModeAbstraction:
+class ServoSdoRelativePositionModeAbstraction(
+    servo_interface.ServoSdoRelativePositionModeInterface
+):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -87,7 +91,7 @@ class ServoSdoRelativePositionModeAbstraction:
         return self.servo_sdo_relative_position_mode_interface.status_word_read()
 
 
-class ServoSdoSpeedModeAbstraction:
+class ServoSdoSpeedModeAbstraction(servo_interface.ServoSdoSpeedModeInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -109,7 +113,9 @@ class ServoSdoSpeedModeAbstraction:
         return self.servo_sdo_speed_mode_interface.status_word()
 
 
-class ServoPdoControlTheProcessOfFindingTheOriginAbstraction:
+class ServoPdoControlTheProcessOfFindingTheOriginAbstraction(
+    servo_interface.ServoPdoControlTheProcessOfFindingTheOriginInterface
+):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -136,11 +142,11 @@ class ServoPdoControlTheProcessOfFindingTheOriginAbstraction:
         )
 
 
-class ServoPdoPositionModeAbstraction(servo_interface.ServoPdoPositionModeInterface):
+class ServoPdoAbsolutePositionModeAbstraction(servo_interface.ServoPdoAbsolutePositionModeInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
-        servo_pdo_position_mode_interface: servo_interface.ServoPdoPositionModeInterface,
+        servo_pdo_position_mode_interface: servo_interface.ServoPdoAbsolutePositionModeInterface,
     ) -> None:
         self.servo_interface = servo_interface
         self.servo_pdo_position_mode_interface = servo_pdo_position_mode_interface

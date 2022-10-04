@@ -7,7 +7,7 @@ import abc
 
 
 class ServoInterface(abc.ABC):
-    servo_id: int
+    device_id: int
 
 
 class ServoSdoAbsolutePositionModeInterface(abc.ABC):
@@ -110,7 +110,7 @@ class ServoPdoControlTheProcessOfFindingTheOriginInterface(abc.ABC):
         raise NotImplemented
 
 
-class ServoPdoPositionModeInterface(abc.ABC):
+class ServoPdoAbsolutePositionModeInterface(abc.ABC):
     @abc.abstractmethod
     def find_the_origin(self) -> str:
         raise NotImplemented
