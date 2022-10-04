@@ -1,14 +1,9 @@
 from servo_realisation import servo_interface
-
+import canalystii
 # to - do
 
 # create base class and use it as parent class
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
-
-
-class ServoAbstraction(servo_interface.ServoInterface):
-    def __init__(self, servo: servo_interface.ServoInterface) -> None:
-        self.device_id = servo.device_id
 
 
 class ServoSdoAbsolutePositionModeAbstraction(
@@ -24,7 +19,10 @@ class ServoSdoAbsolutePositionModeAbstraction(
             servo_sdo_absolute_position_mode_interface
         )
 
-    def control_word(self) -> str:
+    def control_word_1(self) -> str:
+        return self.servo_sdo_absolute_position_mode_interface.control_word()
+    
+    def control_word_2(self) -> str:
         return self.servo_sdo_absolute_position_mode_interface.control_word()
 
     def working_mode(self) -> str:
@@ -40,9 +38,6 @@ class ServoSdoAbsolutePositionModeAbstraction(
         return (
             self.servo_sdo_absolute_position_mode_interface.trapezoidal_acceleration()
         )
-
-    def control_word(self) -> str:
-        return self.servo_sdo_absolute_position_mode_interface.control_word()
 
     def location_cache(self) -> str:
         return self.servo_sdo_absolute_position_mode_interface.location_cache()

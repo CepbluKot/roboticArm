@@ -2,20 +2,21 @@ from servo_realisation import servo_interface
 import canalystii
 
 
-class Servo:
-    device_id: int
+class Servo(servo_interface.ServoInterface):
+    def __init__(self, device_id: int) -> None:
 
+        self.device = canalystii.CanalystDevice(bitrate=1000000, device_index=device_id)
 
-class ServoSdoAbsolutePositionMode:
+class ServoSdoAbsolutePositionMode(servo_interface.ServoSdoAbsolutePositionModeInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
     ) -> None:
-        self.servo_interface = servo_interface
+        
 
-        self.dev = canalystii.CanalystDevice(
-            bitrate=1000000, device_index=servo_interface.device_id
-        )
+        self.dev = servo_interface.device
+
+        
 
     def control_word_1(self) -> str:
         '''
@@ -137,16 +138,14 @@ class ServoSdoAbsolutePositionMode:
         return self.dev.recieve(0), self.dev.recieve(1)
 
 
-class ServoSdoRelativePositionMode:
+class ServoSdoRelativePositionMode(servo_interface.ServoSdoRelativePositionModeInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
     ) -> None:
         self.servo_interface = servo_interface
 
-        self.dev = canalystii.CanalystDevice(
-            bitrate=1000000, device_index=servo_interface.device_id
-        )
+        self.dev = servo_interface.device
 
     def control_word(self) -> str:
         '''
@@ -268,7 +267,7 @@ class ServoSdoRelativePositionMode:
         return self.dev.recieve(0), self.dev.recieve(1)
 
 
-class ServoSdoSpeedMode:
+class ServoSdoSpeedMode(servo_interface.ServoSdoSpeedModeInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -341,7 +340,7 @@ class ServoSdoSpeedMode:
         return self.dev.recieve(0), self.dev.recieve(1)
 
 
-class ServoPdoControlTheProcessOfFindingTheOrigin:
+class ServoPdoControlTheProcessOfFindingTheOrigin(servo_interface.ServoPdoControlTheProcessOfFindingTheOriginInterface):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -380,7 +379,7 @@ class ServoPdoControlTheProcessOfFindingTheOrigin:
         )
 
         self.dev.send(0, new_message)
-        return self.dev.recieve(0), self.dev.recieve(1)
+        return self.dServoPdoAbsolutePositionModeev.recieve(0), self.dev.recieve(1)
 
     def status_word(self) -> str:
         '''

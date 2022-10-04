@@ -1,18 +1,22 @@
 import abc
-
+import canalystii
 # to - do
 
 # create base class and use it as parent class
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class ServoInterface(abc.ABC):
-    device_id: int
+class ServoInterface():
+    device: canalystii.CanalystDevice
 
 
 class ServoSdoAbsolutePositionModeInterface(abc.ABC):
     @abc.abstractmethod
-    def control_word(self) -> str:
+    def control_word_1(self) -> str:
+        raise NotImplemented
+
+    @abc.abstractclassmethod
+    def control_word_2(self) -> str:
         raise NotImplemented
 
     @abc.abstractmethod
@@ -29,10 +33,6 @@ class ServoSdoAbsolutePositionModeInterface(abc.ABC):
 
     @abc.abstractmethod
     def trapezoidal_acceleration(self) -> str:
-        raise NotImplemented
-
-    @abc.abstractmethod
-    def control_word(self) -> str:
         raise NotImplemented
 
     @abc.abstractmethod
