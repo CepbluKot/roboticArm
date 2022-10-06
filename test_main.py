@@ -34,7 +34,7 @@ servo_pdo_position_interpolation_mode = ServoPdoPositionInterpolationMode(servo_
 servo_pdo_position_interpolation_mode_abs = ServoPdoPositionInterpolationModeAbstraction(servo_interface=srv, servo_pdo_position_interpolation_mode_interface=servo_pdo_position_interpolation_mode)
 
 
-# print(servo_sdo_speed_mode_abs.speed_mode())
+print(servo_sdo_speed_mode_abs.speed_mode())
 # sleep(5)
 print(servo_pdo_speed_mode_abs.control_word_working_mode_target_speed_current_position_status_word(speed=0))
 

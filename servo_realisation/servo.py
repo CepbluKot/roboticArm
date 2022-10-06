@@ -8,6 +8,16 @@ class Servo(servo_interface.ServoInterface):
 
         self.device = canalystii.CanalystDevice(bitrate=1000000, device_index=device_id)
 
+    def receive(self, channel: int):
+        return self.device.receive(channel=channel)
+
+    def send(self, channel: int, messages):
+        return self.device.send(channel=channel, messages=messages)
+
+    def stop(self, channel: int):
+        return self.device.stop(channel=channel)
+
+
 class ServoSdoAbsolutePositionMode(servo_interface.ServoSdoAbsolutePositionModeInterface):
     def __init__(
         self,
@@ -315,7 +325,7 @@ class ServoSdoSpeedMode(servo_interface.ServoSdoSpeedModeInterface):
             remote=False,
             extended=False,
             data_len=8,
-            data=(0x23, 0xFF, 0x60, 0x00, 0xF4, 0x01, 0x00, 0x00),
+            data=(0x23, 0xFF, 0x60, 0x00, 0xF9, 0x04, 0x00, 0x00),
         )
 
         self.dev.send(0, new_message)
