@@ -25,3 +25,4 @@ print(
 )
 
 
+print(constructor_abs.create_command(command_from_documentation='60810020', is_read=True, address=0x601))

@@ -21,6 +21,9 @@ from servo_realisation.servo_abstraction import (
     ServoSdoSpeedModeAbstraction,
 )
 
+import servo_realisation.commands_constructor.commands_constructor
+import servo_realisation.commands_constructor.commands_constructor_abstraction
+
 
 # dev = canalystii.CanalystDevice(bitrate=1000000, device_index=0)
 
@@ -56,6 +59,17 @@ servo_pdo_speed_mode_abs = ServoPdoSpeedModeAbstraction(
     servo_interface=srv, servo_pdo_speed_mode_interface=servo_pdo_speed_mode
 )
 
+
+
+
+constructr = (
+    servo_realisation.commands_constructor.commands_constructor.CommandConstructor(
+        servo_object=srv
+    )
+)
+constructor_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(
+    interface=constructr
+)
 
 # servo_sdo_speed_mode_abs.speed_mode()
 # sleep(5)
@@ -166,14 +180,24 @@ set_speed = canalystii.Message(
 # srv.send(channel=0, messages=set_zero_2)
 # sleep(1)
 # srv.send(channel=0, messages=set_abs_mode)
-srv.send(channel=0, messages=set_pos_msg_zero)
-sleep(7)
-srv.send(channel=0, messages=set_pos_msg_ob)
+# srv.send(channel=0, messages=set_pos_msg_zero)
+# sleep(7)
+# srv.send(channel=0, messages=set_pos_msg_ob)
 # srv.send(channel=0, messages=activate)
 # sleep(1)
 # srv.send(channel=0, messages=read_pos_msg)
 begin = time.time()
 
+60400010
+
+xxx = constructor_abs.create_command(command_from_documentation='60810020', is_write=1, address=0x601, write_value=50)
+
+srv.send(channel=0, messages=xxx)
+# srv.send(channel=0, messages=ooo)
+
+
+
+print(xxx)
 
 while time.time() - begin < 2:
 
@@ -182,8 +206,6 @@ while time.time() - begin < 2:
         rec = srv.receive(0)
 
     print(rec)
-
-# servo_pdo_speed_mode_abs.control_word_working_mode_target_speed_current_position_status_word(speed=1)
 
 srv.stop(0)
 srv.stop(1)
