@@ -1,12 +1,14 @@
 import abc
 import canalystii
+
 # to - do
 
 # create base class and use it as parent class
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class ServoInterface():
+class ServoInterface:
+    device_id: int
     device: canalystii.CanalystDevice
 
 

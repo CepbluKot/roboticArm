@@ -1,5 +1,6 @@
 from servo_realisation import servo_interface
 import canalystii
+
 # to - do
 
 # create base class and use it as parent class
@@ -21,7 +22,7 @@ class ServoSdoAbsolutePositionModeAbstraction(
 
     def control_word_1(self) -> str:
         return self.servo_sdo_absolute_position_mode_interface.control_word_1()
-    
+
     def control_word_2(self) -> str:
         return self.servo_sdo_absolute_position_mode_interface.control_word_2()
 
@@ -137,7 +138,9 @@ class ServoPdoControlTheProcessOfFindingTheOriginAbstraction(
         )
 
 
-class ServoPdoAbsolutePositionModeAbstraction(servo_interface.ServoPdoAbsolutePositionModeInterface):
+class ServoPdoAbsolutePositionModeAbstraction(
+    servo_interface.ServoPdoAbsolutePositionModeInterface
+):
     def __init__(
         self,
         servo_interface: servo_interface.ServoInterface,
@@ -174,8 +177,8 @@ class ServoPdoSpeedModeAbstraction(servo_interface.ServoPdoSpeedModeInterface):
     def control_word_working_mode_target_speed_current_position_status_word(
         self, speed: int
     ) -> str:
-        return (
-            self.servo_pdo_speed_mode_interface.control_word_working_mode_target_speed_current_position_status_word(speed=speed)
+        return self.servo_pdo_speed_mode_interface.control_word_working_mode_target_speed_current_position_status_word(
+            speed=speed
         )
 
 

@@ -1,12 +1,28 @@
 from time import sleep
 import canalystii
 import time
-from servo_realisation.servo import Servo, ServoPdoControlTheProcessOfFindingTheOrigin, ServoPdoPositionInterpolationMode, ServoSdoAbsolutePositionMode, ServoPdoSpeedMode, ServoSdoAbsolutePositionMode, ServoSdoRelativePositionMode, ServoSdoSpeedMode
-from servo_realisation.servo_abstraction import ServoPdoControlTheProcessOfFindingTheOriginAbstraction, ServoPdoPositionInterpolationModeAbstraction, ServoPdoAbsolutePositionModeAbstraction, ServoPdoSpeedModeAbstraction, ServoSdoAbsolutePositionModeAbstraction, ServoSdoRelativePositionModeAbstraction, ServoSdoSpeedModeAbstraction
+from servo_realisation.servo import (
+    Servo,
+    ServoPdoControlTheProcessOfFindingTheOrigin,
+    ServoPdoPositionInterpolationMode,
+    ServoSdoAbsolutePositionMode,
+    ServoPdoSpeedMode,
+    ServoSdoAbsolutePositionMode,
+    ServoSdoRelativePositionMode,
+    ServoSdoSpeedMode,
+)
+from servo_realisation.servo_abstraction import (
+    ServoPdoControlTheProcessOfFindingTheOriginAbstraction,
+    ServoPdoPositionInterpolationModeAbstraction,
+    ServoPdoAbsolutePositionModeAbstraction,
+    ServoPdoSpeedModeAbstraction,
+    ServoSdoAbsolutePositionModeAbstraction,
+    ServoSdoRelativePositionModeAbstraction,
+    ServoSdoSpeedModeAbstraction,
+)
 
 
 # dev = canalystii.CanalystDevice(bitrate=1000000, device_index=0)
-
 
 
 # new_message = canalystii.Message(
@@ -31,11 +47,14 @@ from servo_realisation.servo_abstraction import ServoPdoControlTheProcessOfFindi
 # print(dev.receive(1))
 srv = Servo(device_id=0)
 servo_sdo_speed_mode = ServoSdoSpeedMode(servo_interface=srv)
-servo_sdo_speed_mode_abs = ServoSdoSpeedModeAbstraction(servo_interface=srv, servo_sdo_speed_mode_interface=servo_sdo_speed_mode)
+servo_sdo_speed_mode_abs = ServoSdoSpeedModeAbstraction(
+    servo_interface=srv, servo_sdo_speed_mode_interface=servo_sdo_speed_mode
+)
 
 servo_pdo_speed_mode = ServoPdoSpeedMode(servo_interface=srv)
-servo_pdo_speed_mode_abs = ServoPdoSpeedModeAbstraction(servo_interface=srv, servo_pdo_speed_mode_interface=servo_pdo_speed_mode)
-
+servo_pdo_speed_mode_abs = ServoPdoSpeedModeAbstraction(
+    servo_interface=srv, servo_pdo_speed_mode_interface=servo_pdo_speed_mode
+)
 
 
 # servo_sdo_speed_mode_abs.speed_mode()
@@ -46,7 +65,7 @@ set_zero_1 = canalystii.Message(
     remote=False,
     extended=False,
     data_len=6,
-    data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA)
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
 )
 
 set_zero_2 = canalystii.Message(
@@ -54,7 +73,7 @@ set_zero_2 = canalystii.Message(
     remote=False,
     extended=False,
     data_len=6,
-    data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA)
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
 )
 
 set_abs_mode = canalystii.Message(
@@ -62,7 +81,7 @@ set_abs_mode = canalystii.Message(
     remote=False,
     extended=False,
     data_len=5,
-    data=(0x2F, 0x60, 0x60, 0x00, 0x01 )
+    data=(0x2F, 0x60, 0x60, 0x00, 0x01),
 )
 
 set_pos_msg_ob = canalystii.Message(
@@ -70,7 +89,7 @@ set_pos_msg_ob = canalystii.Message(
     remote=False,
     extended=False,
     data_len=8,
-    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x19, 0x00)
+    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x19, 0x00),
 )
 
 set_pos_msg_zero = canalystii.Message(
@@ -78,7 +97,7 @@ set_pos_msg_zero = canalystii.Message(
     remote=False,
     extended=False,
     data_len=8,
-    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00)
+    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00),
 )
 
 read_pos_msg = canalystii.Message(
@@ -86,7 +105,7 @@ read_pos_msg = canalystii.Message(
     remote=False,
     extended=False,
     data_len=4,
-    data=(0x40, 0x64, 0x60, 0x00)
+    data=(0x40, 0x64, 0x60, 0x00),
 )
 
 activate = canalystii.Message(
@@ -94,15 +113,11 @@ activate = canalystii.Message(
     remote=False,
     extended=False,
     data_len=6,
-    data=(0x2B, 0x40, 0x60, 0x00, 0x2F, 0x00)
+    data=(0x2B, 0x40, 0x60, 0x00, 0x2F, 0x00),
 )
 
 msg_80 = canalystii.Message(
-    can_id=0x00,
-    remote=False,
-    extended=False,
-    data_len=1,
-    data=(0x80,)
+    can_id=0x00, remote=False, extended=False, data_len=1, data=(0x80,)
 )
 
 read_speed = canalystii.Message(
@@ -110,7 +125,7 @@ read_speed = canalystii.Message(
     remote=False,
     extended=False,
     data_len=4,
-    data=(0x40,0x81,0x60,0x00)
+    data=(0x40, 0x81, 0x60, 0x00),
 )
 
 read_voltage = canalystii.Message(
@@ -118,7 +133,7 @@ read_voltage = canalystii.Message(
     remote=False,
     extended=False,
     data_len=4,
-    data=(0x40,0x79,0x60,0x00)
+    data=(0x40, 0x79, 0x60, 0x00),
 )
 
 read_acc = canalystii.Message(
@@ -126,7 +141,7 @@ read_acc = canalystii.Message(
     remote=False,
     extended=False,
     data_len=4,
-    data=(0x40,0x83,0x60,0x00)
+    data=(0x40, 0x83, 0x60, 0x00),
 )
 
 set_acc = canalystii.Message(
@@ -134,7 +149,7 @@ set_acc = canalystii.Message(
     remote=False,
     extended=False,
     data_len=8,
-    data=(0x23,0x83,0x60,0x00, 0xB8, 0x0B, 0x00, 0x00)
+    data=(0x23, 0x83, 0x60, 0x00, 0xB8, 0x0B, 0x00, 0x00),
 )
 
 set_speed = canalystii.Message(
@@ -142,7 +157,7 @@ set_speed = canalystii.Message(
     remote=False,
     extended=False,
     data_len=8,
-    data=(0x23,0x81,0x60,0x00, 0x2C, 0x01, 0x00, 0x00)
+    data=(0x23, 0x81, 0x60, 0x00, 0x2C, 0x01, 0x00, 0x00),
 )
 
 
@@ -161,7 +176,7 @@ begin = time.time()
 
 
 while time.time() - begin < 2:
-    
+
     rec = srv.receive(0)
     while not rec:
         rec = srv.receive(0)
