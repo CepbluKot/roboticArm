@@ -2,7 +2,7 @@ from time import sleep
 import canalystii
 import time
 from servo_realisation.servo import (
-    Servo,
+    # Servo,
     ServoPdoControlTheProcessOfFindingTheOrigin,
     ServoPdoPositionInterpolationMode,
     ServoSdoAbsolutePositionMode,
@@ -58,8 +58,6 @@ servo_pdo_speed_mode = ServoPdoSpeedMode(servo_interface=srv)
 servo_pdo_speed_mode_abs = ServoPdoSpeedModeAbstraction(
     servo_interface=srv, servo_pdo_speed_mode_interface=servo_pdo_speed_mode
 )
-
-
 
 
 constructr = (
@@ -190,11 +188,12 @@ begin = time.time()
 
 60400010
 
-xxx = constructor_abs.create_command(command_from_documentation='60810020', is_write=1, address=0x601, write_value=50)
+xxx = constructor_abs.create_command(
+    command_from_documentation="60810020", is_write=1, address=0x601, write_value=50
+)
 
 srv.send(channel=0, messages=xxx)
 # srv.send(channel=0, messages=ooo)
-
 
 
 print(xxx)

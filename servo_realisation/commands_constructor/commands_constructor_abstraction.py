@@ -16,7 +16,7 @@ class CommandConstructorAbstraction(
         command_from_documentation: str,
         is_read: bool = False,
         is_write: bool = False,
-        address: int = 601,
+        address: int = None,
         write_value: int = None,
     ) -> canalystii.Message:
         return self.interface.create_command(
