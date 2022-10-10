@@ -7,9 +7,18 @@ import canalystii
 # https://stackoverflow.com/questions/70970877/how-to-group-methods-in-python-class
 
 
-class ServoInterface:
+class ServoInterface(abc.ABC):
     device_id: int
     device: canalystii.CanalystDevice
+
+    def receive(self, channel: int):
+        raise NotImplemented
+
+    def send(self, channel: int, messages):
+        raise NotImplemented
+
+    def stop(self, channel: int):
+        raise NotImplemented
 
 
 class ServoSdoAbsolutePositionModeInterface(abc.ABC):

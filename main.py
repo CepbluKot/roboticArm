@@ -1,6 +1,10 @@
 from time import sleep
+import threading
 import canalystii
 import time
+import servo_realisation.servo
+import servo_realisation.commands_constructor.commands_constructor_abstraction
+import servo_realisation.commands_constructor.commands_constructor
 from servo_realisation.servo import (
     # Servo,
     ServoPdoControlTheProcessOfFindingTheOrigin,
@@ -23,32 +27,9 @@ from servo_realisation.servo_abstraction import (
 
 import servo_realisation.commands_constructor.commands_constructor
 import servo_realisation.commands_constructor.commands_constructor_abstraction
+import servo_realisation.servo_commands.commands
 
-
-# dev = canalystii.CanalystDevice(bitrate=1000000, device_index=0)
-
-
-# new_message = canalystii.Message(
-#     can_id=0x401,
-#     remote=False,
-#     extended=False,
-#     data_len=7,
-#     data=(0x0F, 0x00, 0x03, 0x00, 0x00, 0x00, 0x00),
-# )
-
-# new_message = canalystii.Message(
-#     can_id=0x141,
-#     remote=False,
-#     extended=False,
-#     # data_len=0,
-#     # data=(0x00, )
-# )
-
-# dev.send(0, new_message)
-
-
-# print(dev.receive(1))
-srv = Servo(device_id=0)
+srv = servo_realisation.servo.Servo(device_id=0)
 servo_sdo_speed_mode = ServoSdoSpeedMode(servo_interface=srv)
 servo_sdo_speed_mode_abs = ServoSdoSpeedModeAbstraction(
     servo_interface=srv, servo_sdo_speed_mode_interface=servo_sdo_speed_mode
@@ -88,20 +69,21 @@ set_zero_2 = canalystii.Message(
     data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
 )
 
-set_abs_mode = canalystii.Message(
-    can_id=0x601,
-    remote=False,
-    extended=False,
-    data_len=5,
-    data=(0x2F, 0x60, 0x60, 0x00, 0x01),
-)
+
+# set_abs_mode = canalystii.Message(
+#     can_id=0x601,
+#     remote=False,
+#     extended=False,
+#     data_len=5,
+#     data=(0x2F, 0x60, 0x60, 0x00, 0x01),
+# )
 
 set_pos_msg_ob = canalystii.Message(
     can_id=0x601,
     remote=False,
     extended=False,
     data_len=8,
-    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x19, 0x00),
+    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00),
 )
 
 set_pos_msg_zero = canalystii.Message(
@@ -172,39 +154,96 @@ set_speed = canalystii.Message(
     data=(0x23, 0x81, 0x60, 0x00, 0x2C, 0x01, 0x00, 0x00),
 )
 
-
-# srv.send(channel=0, messages=read_speed)
-
-# srv.send(channel=0, messages=set_zero_2)
-# sleep(1)
-# srv.send(channel=0, messages=set_abs_mode)
-# srv.send(channel=0, messages=set_pos_msg_zero)
-# sleep(7)
-# srv.send(channel=0, messages=set_pos_msg_ob)
-# srv.send(channel=0, messages=activate)
-# sleep(1)
-# srv.send(channel=0, messages=read_pos_msg)
-begin = time.time()
-
-60400010
-
-xxx = constructor_abs.create_command(
-    command_from_documentation="60810020", is_write=1, address=0x601, write_value=50
+set_target_pos = canalystii.Message(
+    can_id=0x501,
+    remote=False,
+    extended=False,
+    data_len=4,
+    data=(0x00, 0x00, 0x00, 0x00),
 )
 
-srv.send(channel=0, messages=xxx)
-# srv.send(channel=0, messages=ooo)
+start_move_to_target_pos = canalystii.Message(
+    can_id=0x80,
+    remote=False,
+    extended=False,
+    data_len=0,
+    data=(0x80,),
+)
 
 
-print(xxx)
+set_speed = constructor_abs.create_command(
+    command_from_documentation="60810020", is_write=1, address=0x601, write_value=500
+)
 
-while time.time() - begin < 2:
 
+# speed_mode = constructor_abs.create_command(
+#     command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
+# )
+
+
+abs_mode = constructor_abs.create_command(
+    command_from_documentation='60400010',
+    is_write=True,
+    write_value=47,
+    address=0x601
+)
+
+print(abs_mode)
+
+
+position = constructor_abs.create_command(
+    command_from_documentation="607A0020", is_write=1, address=0x601, write_value=32000*30
+)
+
+
+
+servo1 = servo_realisation.servo_commands.commands.ControlServo(servo_object=srv)
+
+
+
+# servo1.set_movements_speed(700)
+# servo1.simple_move_to_position(position=32000*50)
+
+
+ser = servo_realisation.commands_constructor.commands_constructor.CommandConstructor(servo_object=srv)
+ser_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(ser)
+
+
+change_mode = ser_abs.create_command(
+                command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
+            )
+
+com_b = ser_abs.create_command(
+                command_from_documentation="607A0020", is_write=1, address=0x601, write_value=32000*50
+            )
+
+srv.send(channel=0, messages=read_pos_msg)
+
+reciv = srv.receive(channel=0)
+while not reciv:
+    reciv = srv.receive(channel=0)
+print(reciv)
+
+# -------------------------
+
+srv.send(channel=0, messages=set_target_pos)
+sleep(0.1)
+srv.send(channel=0, messages=start_move_to_target_pos)
+sleep(0.1)
+constructor_abs.create_command(command_from_documentation='60830020', is_write=1, address=0x601, write_value=100)
+
+# --------------------------
+
+
+
+begin = time.time()
+
+while 1:
     rec = srv.receive(0)
     while not rec:
         rec = srv.receive(0)
 
-    print(rec)
+    print('print in loop -> ', rec)
 
 srv.stop(0)
 srv.stop(1)

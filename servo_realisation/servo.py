@@ -3,19 +3,19 @@ from servo_realisation import servo_interface
 import canalystii
 
 
-# class Servo(servo_interface.ServoInterface):
-#     def __init__(self, device_id: int) -> None:
-#         self.device_id = device_id
-#         self.device = canalystii.CanalystDevice(bitrate=1000000, device_index=device_id)
+class Servo(servo_interface.ServoInterface):
+    def __init__(self, device_id: int) -> None:
+        self.device_id = device_id
+        self.device = canalystii.CanalystDevice(bitrate=1000000, device_index=device_id)
 
-#     def receive(self, channel: int):
-#         return self.device.receive(channel=channel)
+    def receive(self, channel: int):
+        return self.device.receive(channel=channel)
 
-#     def send(self, channel: int, messages):
-#         return self.device.send(channel=channel, messages=messages)
+    def send(self, channel: int, messages):
+        return self.device.send(channel=channel, messages=messages)
 
-#     def stop(self, channel: int):
-#         return self.device.stop(channel=channel)
+    def stop(self, channel: int):
+        return self.device.stop(channel=channel)
 
 
 class ServoSdoAbsolutePositionMode(
