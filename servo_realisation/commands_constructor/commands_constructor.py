@@ -101,7 +101,6 @@ class CommandConstructor:
 
                 # print(convert_to_hex, final_command)
                 # final_command = result
-
                 return final_command
 
             elif is_read:
