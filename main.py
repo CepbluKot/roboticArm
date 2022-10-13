@@ -53,7 +53,7 @@ constructor_abs = servo_realisation.commands_constructor.commands_constructor_ab
 # servo_sdo_speed_mode_abs.speed_mode()
 # sleep(5)
 
-set_zero_1 = canalystii.Message(
+set_zero_1_1 = canalystii.Message(
     can_id=0x601,
     remote=False,
     extended=False,
@@ -61,7 +61,7 @@ set_zero_1 = canalystii.Message(
     data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
 )
 
-set_zero_2 = canalystii.Message(
+set_zero_2_1 = canalystii.Message(
     can_id=0x601,
     remote=False,
     extended=False,
@@ -69,6 +69,23 @@ set_zero_2 = canalystii.Message(
     data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
 )
 
+
+
+set_zero_1_2 = canalystii.Message(
+    can_id=0x602,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
+)
+
+set_zero_2_2 = canalystii.Message(
+    can_id=0x602,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
+)
 
 # set_abs_mode = canalystii.Message(
 #     can_id=0x601,
@@ -114,13 +131,6 @@ msg_80 = canalystii.Message(
     can_id=0x00, remote=False, extended=False, data_len=1, data=(0x80,)
 )
 
-read_speed = canalystii.Message(
-    can_id=0x601,
-    remote=False,
-    extended=False,
-    data_len=4,
-    data=(0x40, 0x81, 0x60, 0x00),
-)
 
 read_voltage = canalystii.Message(
     can_id=0x601,
@@ -154,13 +164,13 @@ set_speed = canalystii.Message(
     data=(0x23, 0x81, 0x60, 0x00, 0x2C, 0x01, 0x00, 0x00),
 )
 
-set_target_pos = canalystii.Message(
-    can_id=0x501,
-    remote=False,
-    extended=False,
-    data_len=4,
-    data=(0x00, 0x00, 0x00, 0x00),
-)
+# set_target_pos = canalystii.Message(
+#     can_id=0x502,
+#     remote=False,
+#     extended=False,
+#     data_len=4,
+#     data=(0x00, 0x00 , 0x00, 0x00),
+# )
 
 start_move_to_target_pos = canalystii.Message(
     can_id=0x80,
@@ -209,38 +219,174 @@ ser = servo_realisation.commands_constructor.commands_constructor.CommandConstru
 ser_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(ser)
 
 
+# change_mode = ser_abs.create_command(
+#                 command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
+#             )
+
+# com_b = ser_abs.create_command(
+#                 command_from_documentation="607A0020", is_write=1, address=0x601, write_value=32000*50
+#             )
+
+# srv.send(channel=0, messages=read_pos_msg)
+
+# reciv = srv.receive(channel=0)
+# while not reciv:
+#     reciv = srv.receive(channel=0)
+# print(reciv)
+
+# -------------------------
+
+
+
+# sleep(0.1)
+# srv.send(channel=0, messages=set_zero_1_2)
+# sleep(0.1)
+# srv.send(channel=0, messages=set_zero_2_2)
+# sleep(0.1)
+
+
+# sleep(0.1)
+# srv.send(channel=0, messages=set_zero_1_1)
+# sleep(0.1)
+# srv.send(channel=0, messages=set_zero_2_1)
+# sleep(0.1)
+
+
+
 change_mode = ser_abs.create_command(
                 command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
             )
 
-com_b = ser_abs.create_command(
-                command_from_documentation="607A0020", is_write=1, address=0x601, write_value=32000*50
+
+
+set_target_pos_2 = canalystii.Message(
+    can_id=0x502,
+    remote=False,
+    extended=False,
+    data_len=4,
+    data=(0x00, 0x00 , 0x00, 0x00),
+)
+
+
+set_target_pos_1 = canalystii.Message(
+    can_id=0x501,
+    remote=False,
+    extended=False,
+    data_len=4,
+    data=(0x00, 0x00 , 0x00, 0x00),
+)
+
+
+write_speed_1 = ser_abs.create_command(
+                command_from_documentation="60810020", is_write=1, address=0x601, write_value=5
             )
 
-srv.send(channel=0, messages=read_pos_msg)
 
-reciv = srv.receive(channel=0)
-while not reciv:
-    reciv = srv.receive(channel=0)
-print(reciv)
+write_speed_2 = ser_abs.create_command(
+                command_from_documentation="60810020", is_write=1, address=0x602, write_value=5
+            )
 
-# -------------------------
 
-srv.send(channel=0, messages=set_target_pos)
+
+srv.send(channel=0, messages=write_speed_1)
+sleep(0.1)
+srv.send(channel=0, messages=write_speed_2)
+sleep(0.1)
+
+
+
+get_pos = ser_abs.create_command(command_from_documentation='60640020', is_read=1, address=0x601)
+
+
+
+
+set_pos_msg_zero = canalystii.Message(
+    can_id=0x601,
+    remote=False,
+    extended=False,
+    data_len=8,
+    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00),
+)
+
+
+set_pos_msg_zero = canalystii.Message(
+    can_id=0x601,
+    remote=False,
+    extended=False,
+    data_len=8,
+    data=(0x23, 0x7A, 0x60, 0x00, 0x00, 0x00, 0x00, 0x00),
+)
+
+
+change_mode_1 = ser_abs.create_command(
+                command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
+            )
+change_mode_2 = ser_abs.create_command(
+                command_from_documentation="60600008", is_write=1, address=0x602, write_value=1
+            )
+
+# sleep(0.1)
+# srv.send(channel=0, messages=change_mode_1)
+# sleep(0.1)
+# sleep(0.1)
+# srv.send(channel=0, messages=change_mode_2)
+# sleep(0.1)
+
+
+
+
+# srv.send(channel=0, messages=get_pos)
+sleep(0.1)
+srv.send(channel=0, messages=set_target_pos_1)
+sleep(0.1)
+srv.send(channel=0, messages=set_target_pos_2)
 sleep(0.1)
 srv.send(channel=0, messages=start_move_to_target_pos)
 sleep(0.1)
-constructor_abs.create_command(command_from_documentation='60830020', is_write=1, address=0x601, write_value=100)
 
 # --------------------------
 
 
+change_id = ser_abs.create_command(
+                command_from_documentation="26150010", is_write=1, address=0x601, write_value=2
+            )
+
+
+save = ser_abs.create_command(
+                command_from_documentation="26140010", is_write=1, address=0x601, write_value=1
+            )
+
+read_speed = ser_abs.create_command(
+                command_from_documentation="60810020", is_read=1, address=0x602
+            )
+
+
+
+
+# srv.send(channel=0, messages=change_id)
+# srv.send(channel=0, messages=read_speed)
 
 begin = time.time()
 
-while 1:
+while time.time() - begin < 1:
     rec = srv.receive(0)
     while not rec:
+        rec = srv.receive(0)
+
+    print('print in loop -> ', rec)
+
+print('send!')
+# srv.send(channel=0, messages=save)
+
+
+begin = time.time()
+
+while time.time() - begin < 1:
+    rec = srv.receive(0)
+    while not rec:
+        sleep(0.1)
+        srv.send(channel=0, messages=get_pos)
+        sleep(0.1)
         rec = srv.receive(0)
 
     print('print in loop -> ', rec)
