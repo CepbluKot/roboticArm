@@ -1,9 +1,13 @@
 import abc
+import canalystii
 
 
 class ServoInterface(abc.ABC):
+    servo_id = int()
+    device = canalystii.CanalystDevice
+
     @abc.abstractmethod
-    def recieve(self, channel: int):
+    def receive(self, channel: int):
         raise NotImplemented
 
     @abc.abstractmethod
