@@ -1,91 +1,41 @@
-from time import sleep
-import threading
 import canalystii
-import time
-import servo_realisation.servo
-import servo_realisation.commands_constructor.commands_constructor_abstraction
-import servo_realisation.commands_constructor.commands_constructor
-from servo_realisation.servo import (
-    # Servo,
-    ServoPdoControlTheProcessOfFindingTheOrigin,
-    ServoPdoPositionInterpolationMode,
-    ServoSdoAbsolutePositionMode,
-    ServoPdoSpeedMode,
-    ServoSdoAbsolutePositionMode,
-    ServoSdoRelativePositionMode,
-    ServoSdoSpeedMode,
-)
-from servo_realisation.servo_abstraction import (
-    ServoPdoControlTheProcessOfFindingTheOriginAbstraction,
-    ServoPdoPositionInterpolationModeAbstraction,
-    ServoPdoAbsolutePositionModeAbstraction,
-    ServoPdoSpeedModeAbstraction,
-    ServoSdoAbsolutePositionModeAbstraction,
-    ServoSdoRelativePositionModeAbstraction,
-    ServoSdoSpeedModeAbstraction,
-)
-
-import servo_realisation.commands_constructor.commands_constructor
-import servo_realisation.commands_constructor.commands_constructor_abstraction
-import servo_realisation.servo_commands.commands
-
-srv = servo_realisation.servo.Servo(device_id=0)
-servo_sdo_speed_mode = ServoSdoSpeedMode(servo_interface=srv)
-servo_sdo_speed_mode_abs = ServoSdoSpeedModeAbstraction(
-    servo_interface=srv, servo_sdo_speed_mode_interface=servo_sdo_speed_mode
-)
-
-servo_pdo_speed_mode = ServoPdoSpeedMode(servo_interface=srv)
-servo_pdo_speed_mode_abs = ServoPdoSpeedModeAbstraction(
-    servo_interface=srv, servo_pdo_speed_mode_interface=servo_pdo_speed_mode
-)
-
-
-constructr = (
-    servo_realisation.commands_constructor.commands_constructor.CommandConstructor(
-        servo_object=srv
-    )
-)
-constructor_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(
-    interface=constructr
-)
-
+from time import sleep
 # # servo_sdo_speed_mode_abs.speed_mode()
 # # sleep(5)
 
-# set_zero_1_1 = canalystii.Message(
-#     can_id=0x601,
-#     remote=False,
-#     extended=False,
-#     data_len=6,
-#     data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
-# )
+set_zero_1_1 = canalystii.Message(
+    can_id=0x605,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
+)
 
-# set_zero_2_1 = canalystii.Message(
-#     can_id=0x601,
-#     remote=False,
-#     extended=False,
-#     data_len=6,
-#     data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
-# )
+set_zero_2_1 = canalystii.Message(
+    can_id=0x605,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
+)
 
 
 
-# set_zero_1_2 = canalystii.Message(
-#     can_id=0x602,
-#     remote=False,
-#     extended=False,
-#     data_len=6,
-#     data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
-# )
+set_zero_1_2 = canalystii.Message(
+    can_id=0x606,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x66, 0xEA),
+)
 
-# set_zero_2_2 = canalystii.Message(
-#     can_id=0x602,
-#     remote=False,
-#     extended=False,
-#     data_len=6,
-#     data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
-# )
+set_zero_2_2 = canalystii.Message(
+    can_id=0x606,
+    remote=False,
+    extended=False,
+    data_len=6,
+    data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
+)
 
 # # set_abs_mode = canalystii.Message(
 # #     can_id=0x601,
@@ -215,9 +165,6 @@ constructor_abs = servo_realisation.commands_constructor.commands_constructor_ab
 # # servo1.simple_move_to_position(position=32000*50)
 
 
-ser = servo_realisation.commands_constructor.commands_constructor.CommandConstructor(servo_object=srv)
-ser_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(ser)
-
 
 # # change_mode = ser_abs.create_command(
 # #                 command_from_documentation="60600008", is_write=1, address=0x601, write_value=1
@@ -237,19 +184,19 @@ ser_abs = servo_realisation.commands_constructor.commands_constructor_abstractio
 # # -------------------------
 
 
+srv =canalystii.CanalystDevice(device_index=0, bitrate=1000000)
+sleep(0.1)
+srv.send(channel=0, messages=set_zero_1_2)
+sleep(0.1)
+srv.send(channel=0, messages=set_zero_2_2)
+sleep(0.1)
 
-# # sleep(0.1)
-# # srv.send(channel=0, messages=set_zero_1_2)
-# # sleep(0.1)
-# # srv.send(channel=0, messages=set_zero_2_2)
-# # sleep(0.1)
 
-
-# # sleep(0.1)
-# # srv.send(channel=0, messages=set_zero_1_1)
-# # sleep(0.1)
-# # srv.send(channel=0, messages=set_zero_2_1)
-# # sleep(0.1)
+sleep(0.1)
+srv.send(channel=0, messages=set_zero_1_1)
+sleep(0.1)
+srv.send(channel=0, messages=set_zero_2_1)
+sleep(0.1)
 
 
 
@@ -415,7 +362,9 @@ ser_abs = servo_realisation.commands_constructor.commands_constructor_abstractio
 
 
 
-
+# change_id = ser_abs.create_command(
+#                 command_from_documentation="26150010", is_write=1, address=0x601, write_value=2
+#             )
 # srv.send(channel=0, messages=change_id)
 
 # srv.send(channel=0, messages=read_speed)
@@ -424,22 +373,18 @@ ser_abs = servo_realisation.commands_constructor.commands_constructor_abstractio
 # srv.send(channel=0, messages=get_pos)
 
 
-signalization = ser_abs.create_command(command_from_documentation='260E0010', is_read=1, address=0x602)
-# ^^^ check errors 
-# check page 7
 
+# srv.send(channel=0, messages=signalization)
 
-srv.send(channel=0, messages=signalization)
+# begin = time.time()
 
-begin = time.time()
+# while time.time() - begin < 5:
+#     rec = srv.receive(0)
+#     while not rec:
 
-while time.time() - begin < 5:
-    rec = srv.receive(0)
-    while not rec:
+#         rec = srv.receive(0)
 
-        rec = srv.receive(0)
-
-    print('print in loop -> ', rec)
+#     print('print in loop -> ', rec)
 
 srv.stop(0)
 srv.stop(1)

@@ -19,18 +19,21 @@ class CommandsReader(
             data = ""
             data += recieve[1]
 
-            return int(data, 16), command_data
+            # return int(data, 16), command_data
+            return int(data, 16)
 
         elif num_of_bytes_to_read == "4b":
             data = ""
             data += recieve[2]
             data += recieve[1]
-            return int(data, 16), command_data
-
+            # return int(data, 16), command_data
+            return int(data, 16)
         elif num_of_bytes_to_read == "43":
             data = ""
             data += recieve[4]
             data += recieve[3]
             data += recieve[2]
             data += recieve[1]
-            return int(data, 16), command_data
+            # return int(data, 16), command_data
+            return int(data, 16)
+            

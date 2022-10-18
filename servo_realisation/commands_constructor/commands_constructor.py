@@ -1,5 +1,6 @@
 import canalystii
 import servo_realisation.control_objects.servo_interface
+import servo_realisation.commands_constructor.commands_constructor_interface
 
 
 def get_bytes_code(num_of_bytes: int = None, is_read: bool = False):
@@ -17,7 +18,7 @@ def get_bytes_code(num_of_bytes: int = None, is_read: bool = False):
             return "0x23"
 
 
-class CommandConstructor:
+class CommandConstructor(servo_realisation.commands_constructor.commands_constructor_interface.CommandConstructorInterface):
     def __init__(
         self,
         servo_object: servo_realisation.control_objects.servo_interface.ServoInterface,

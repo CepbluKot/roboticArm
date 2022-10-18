@@ -1,5 +1,5 @@
 import servo_realisation.commands_constructor.input_output_realisation
-import servo_realisation.servo
+
 import canalystii, time
 
 
@@ -7,49 +7,6 @@ servo_1 = servo_realisation.servo.Servo(device_id=0)
 servo_2 = servo_1
 create_command_servo_1 = servo_realisation.commands_constructor.input_output_realisation.ServoCommander(servo_object=servo_1)
 create_command_servo_2 = servo_realisation.commands_constructor.input_output_realisation.ServoCommander(servo_object=servo_2)
-
-
-def transform(write_value, address):
-    write_value = hex(write_value)
-    write_value = write_value[2:]
-    result = []
-    num_of_iterations = 0
-    while write_value:
-        result.append("0x" + write_value[-2:])
-        write_value = write_value[:-2]
-        num_of_iterations += 1
-
-    while 4 != num_of_iterations:
-        result.append("0x00")
-        num_of_iterations += 1
-
-    convert_to_hex = ()
-    for element in result:
-        convert_to_hex += (int(element, 0),)
-
-    final_command = canalystii.Message(
-        can_id=address,
-        remote=False,
-        extended=False,
-        data_len=len(convert_to_hex),
-        data=convert_to_hex,
-    )
-
-    return final_command
-
-def convert_read(hexes):
-    res = []
-    while hexes:
-        res.append( hexes[-2:])
-        hexes = hexes[:-2]
-    
-    res_str = ''
-    for elem in res:
-        res_str += elem
-
-
-    return (int(res_str, 16))
-
 
 
 
