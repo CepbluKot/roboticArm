@@ -1,5 +1,5 @@
 import canalystii
-import servo_realisation.servo_interface
+import servo_realisation.servo_object.servo_interface
 
 
 def get_bytes_code(
@@ -21,8 +21,9 @@ def get_bytes_code(
 
 
 class CommandConstructor:
-    def __init__(self, servo_object: servo_realisation.servo_interface.ServoInterface):
+    def __init__(self, servo_object: servo_realisation.servo_object.servo_interface.ServoInterface):
         self.device_id = servo_object.device_id
+        self.servo_id = 
 
     def create_command(
         self,
