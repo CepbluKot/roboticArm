@@ -58,10 +58,10 @@ servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.cr
 def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_pos=0, servo_4_target_pos=0, servo_5_target_pos=0, servo_6_target_pos=0):
     
 
-    sp1 = 300
-    sp2 = 300
-    servo_2_abs.set_speed(value=sp1)
-    servo_2_abs.set_speed(value=sp2)
+    spd1 = 60
+    spd2 = 60
+    servo_1_abs.set_speed(value=spd1)
+    servo_2_abs.set_speed(value=spd2)
     # getting SPEED
      
     servo_1_current_speed = servo_1_abs.read_speed().decoded_data
@@ -77,10 +77,7 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     if servo_2_current_pos >= 42949672900:
         servo_2_current_pos = 0
 
-    # print('servo_1_current_speed', servo_1_current_speed)
-    # print('servo_2_current_speed', servo_2_current_speed)
-    # print('servo_1_current_pos', servo_1_current_pos)
-    # print('servo_2_current_pos', servo_2_current_pos)
+    
 
     servo_1_target_pos = int(32768 * 50 /360 * servo_1_target_pos)
     servo_2_target_pos = int(32768 * 50 /360 * servo_2_target_pos)
@@ -90,38 +87,44 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
 
 
     if not servo_1_current_speed:
-        n =sp1
+        n =spd1
         servo_1_abs.set_speed(value=n)
         servo_1_current_speed = n
 
     if not servo_2_current_speed:
-        n = sp2
+        n = spd2
         servo_2_abs.set_speed(value=n)
         servo_2_current_speed = n
 
     target_time = 0
-    servo_1_target_speed = 0
-    servo_2_target_speed = 0
+    servo_1_target_speed = servo_1_current_speed
+    servo_2_target_speed = servo_2_current_speed
+
+
     if abs(servo_1_distance_delta) >= abs(servo_2_distance_delta):
         target_time = abs(servo_1_distance_delta) / servo_1_current_speed
-
+        # print(target_time)
         servo_2_target_speed = abs(servo_2_distance_delta / target_time)
 
+
+        servo_1_abs.set_speed(value=servo_1_target_speed)
         servo_2_abs.set_speed(value=servo_2_target_speed)
 
-        print('servo_1_current_speed', servo_1_current_speed)
-        print('servo_2_target_speed', servo_2_target_speed)
+        
 
     else:
         target_time = abs(servo_2_distance_delta) / servo_2_current_speed
         servo_1_target_speed = abs(servo_1_distance_delta / target_time)
         
         servo_1_abs.set_speed(value=servo_1_target_speed)
+        servo_2_abs.set_speed(value=servo_2_target_speed)
 
-        print('servo_1_target_speed', servo_1_target_speed)
-        print('servo_2_speed', servo_2_current_speed)
+       
 
-
+    print('servo_1_current_pos', servo_1_current_pos, 'servo_1_target_pos', servo_1_target_pos)
+    print('servo_2_current_pos', servo_2_current_pos, 'servo_2_target_pos', servo_2_target_pos)
+    
+    
     servo_1_abs.set_pos(value=servo_1_target_pos)
     servo_2_abs.set_pos(value=servo_2_target_pos)
 
@@ -130,14 +133,20 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     servo_5_abs.set_pos(value=0)
     servo_6_abs.set_pos(value=0)
 
-    print('ser2_tsped', servo_2_target_speed,'ser1_tsped', servo_1_target_speed, 'ser2_sped', servo_2_current_speed,'ser1_sped', servo_1_current_speed,'t1', 32768*50/360*servo_1_target_pos, 't2', 32768*50/360*servo_2_target_pos)
+    print('servo_1_speed', servo_1_target_speed, 'servo_2_speed', servo_2_target_speed)
 
+    
+    # input('GOOGOGOGOG')
     servo_1_abs.general_move_command()
 
 servo_1_abs.set_mode(value=1)
 servo_2_abs.set_mode(value=1)
-move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0)
 
+
+while 1:
+    a, b = input('input').split(' ')
+    # print(int(a), int(b))
+    move_to_pos_sync(servo_1_target_pos=int(a), servo_2_target_pos=int(b))
 
 
 # while 1:
@@ -156,6 +165,8 @@ move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0)
 
 
 
+# servo_1_abs.set_zero_pos()
+# servo_2_abs.set_zero_pos()
 
 # servo_1_abs.set_speed(20)
 # servo_2_abs.set_speed(20)
