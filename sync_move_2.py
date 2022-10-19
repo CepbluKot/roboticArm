@@ -3,7 +3,7 @@ import servo_realisation.commands_reader.input_output_realisation
 import servo_realisation.control_objects.input_output_realisation
 import servo_realisation.commands_constructor.commands_constructor_interface
 import servo_realisation.control_objects.servo_interface
-
+import servo_realisation.commands_abstraction.commands
 
 import servo_realisation.commands_abstraction.input_output_realisation
 
@@ -26,6 +26,8 @@ servo_5 = servo_realisation.control_objects.input_output_realisation.create_serv
 servo_6 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=6
 )
+
+
 
 
 # reader = (
@@ -53,13 +55,39 @@ servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.cr
 )
 
 
+# class ServoParameters:
+#     def __init__(self, current_speed: int, ) -> None:
+#         pass
+
+
+# def get_servo_current_parameters(servo_abs_object: servo_realisation.commands_abstraction.commands.ControlServo, target_pos: int):
+#     servo_current_speed = servo_abs_object.read_speed()
+#     servo_current_pos = servo_abs_object.read_pos()
+#     if servo_current_pos >= 42949672900:
+#         servo_current_pos = 0
+    
+#     servo_target_pos = int(32768 * 50 /360 * target_pos)
+#     servo_1_distance_delta = abs(servo_current_pos - servo_target_pos)
+
+
+    
+#     default_speed = 30
+#     if not servo_1_current_speed:
+#         servo_1_abs.set_speed(value=default_speed)
+#         servo_1_current_speed = default_speed
+
+#     if not servo_2_current_speed:
+#         servo_2_abs.set_speed(value=default_speed)
+#         servo_2_current_speed = default_speed
+
+    
 
 
 def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_pos=0, servo_4_target_pos=0, servo_5_target_pos=0, servo_6_target_pos=0):
     
 
-    spd1 = 60
-    spd2 = 60
+    spd1 = 100
+    spd2 = 100
     servo_1_abs.set_speed(value=spd1)
     servo_2_abs.set_speed(value=spd2)
     # getting SPEED
@@ -106,8 +134,6 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
         # print(target_time)
         servo_2_target_speed = abs(servo_2_distance_delta / target_time)
 
-
-        servo_1_abs.set_speed(value=servo_1_target_speed)
         servo_2_abs.set_speed(value=servo_2_target_speed)
 
         
@@ -117,7 +143,7 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
         servo_1_target_speed = abs(servo_1_distance_delta / target_time)
         
         servo_1_abs.set_speed(value=servo_1_target_speed)
-        servo_2_abs.set_speed(value=servo_2_target_speed)
+
 
        
 
@@ -143,11 +169,22 @@ servo_1_abs.set_mode(value=1)
 servo_2_abs.set_mode(value=1)
 
 
-while 1:
-    a, b = input('input').split(' ')
-    # print(int(a), int(b))
-    move_to_pos_sync(servo_1_target_pos=int(a), servo_2_target_pos=int(b))
 
+def reader():
+    while True:
+        read_1 = servo_1.receive(0)
+        print("read_1", read_1)
+        read_2 = servo_2.receive(0)
+        print("read_2", read_2)
+
+
+def writer():
+    while 1:
+        a, b = input('input').split(' ')
+        # print(int(a), int(b))
+        move_to_pos_sync(servo_1_target_pos=int(a), servo_2_target_pos=int(b))
+
+writer()
 
 # while 1:
 #     fir = servo_3_abs.read_pos()

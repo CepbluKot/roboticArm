@@ -41,9 +41,9 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
         command_byte_second = command_from_documentation[2:4]
 
         if write_value:
-            print('RECIEVED SPEED', write_value)
+            # print('RECIEVED SPEED', write_value)
             write_value = round(write_value)
-            print('SET SPEED', write_value)
+            # print('SET SPEED', write_value)
 
             result.append(get_bytes_code(num_of_bytes=num_of_bytes_for_command))
 
