@@ -8,8 +8,8 @@ class ServoInterface(abc.ABC):
 
     @abc.abstractmethod
     def receive(self, channel: int):
-        raise NotImplemented
+        raise NotImplementedError
 
     @abc.abstractmethod
     def send(self, channel: int, messages):
-        raise NotImplemented
+        raise NotImplementedError

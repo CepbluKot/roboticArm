@@ -1,6 +1,6 @@
+import canalystii
 import servo_realisation.control_objects.servo
 import servo_realisation.control_objects.servo_abstraction
-import canalystii
 
 
 device = canalystii.CanalystDevice(bitrate=1000000, device_index=0)

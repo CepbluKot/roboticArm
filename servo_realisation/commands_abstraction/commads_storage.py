@@ -9,10 +9,11 @@ class CommandData():
 
 
 class ServoData():
-    def __init__(self, speed: int, pos: int) -> None:
+    def __init__(self, speed: int, pos: int, mode: int) -> None:
         self.speed = speed
         self.pos = pos
-        
+        self.mode = mode
+
 
 commands_info_storage: typing.Dict[str, CommandData] = {
     "60600008": CommandData(answer_code=580, send_address=0x600), # mode
