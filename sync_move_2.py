@@ -27,13 +27,9 @@ servo_6 = servo_realisation.control_objects.input_output_realisation.create_serv
     servo_id=6
 )
 
-
-
-
 # reader = (
 #     servo_realisation.commands_reader.input_output_realisation.create_servo_commands_reader()
 # )
-
 
 servo_1_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_1
@@ -80,12 +76,8 @@ servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.cr
 #         servo_2_abs.set_speed(value=default_speed)
 #         servo_2_current_speed = default_speed
 
-    
-
 
 def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_pos=0, servo_4_target_pos=0, servo_5_target_pos=0, servo_6_target_pos=0):
-    
-
     spd1 = 100
     spd2 = 100
     servo_1_abs.set_speed(value=spd1)
@@ -130,7 +122,9 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
 
 
     if abs(servo_1_distance_delta) >= abs(servo_2_distance_delta):
+        print("PRIORITY - SERVO 1")
         target_time = abs(servo_1_distance_delta) / servo_1_current_speed
+        print('CALC TARG TIME: ', abs(servo_1_distance_delta), ' /', servo_1_current_speed, ' =', target_time)
         # print(target_time)
         servo_2_target_speed = abs(servo_2_distance_delta / target_time)
 
@@ -139,7 +133,9 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
         
 
     else:
+        print("PRIORITY - SERVO 2")
         target_time = abs(servo_2_distance_delta) / servo_2_current_speed
+        print('CALC TARG TIME: ', abs(servo_2_distance_delta), ' /', servo_2_current_speed, ' =', target_time)
         servo_1_target_speed = abs(servo_1_distance_delta / target_time)
         
         servo_1_abs.set_speed(value=servo_1_target_speed)
@@ -162,7 +158,6 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     print('servo_1_speed', servo_1_target_speed, 'servo_2_speed', servo_2_target_speed)
 
     
-    # input('GOOGOGOGOG')
     servo_1_abs.general_move_command()
 
 servo_1_abs.set_mode(value=1)
@@ -184,7 +179,11 @@ def writer():
         # print(int(a), int(b))
         move_to_pos_sync(servo_1_target_pos=int(a), servo_2_target_pos=int(b))
 
-writer()
+# writer()
+
+print('servo_1_abs',servo_1_abs.read_pos().decoded_data)
+print('servo_2_abs',servo_2_abs.read_pos().decoded_data)
+
 
 # while 1:
 #     fir = servo_3_abs.read_pos()

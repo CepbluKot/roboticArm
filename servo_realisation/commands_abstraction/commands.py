@@ -13,7 +13,8 @@ import servo_realisation.commands_reader.commands_reader_data_structures
 # 4) output the data
 
 
-commands_storage = servo_realisation.commands_abstraction.commads_storage.commands_storage
+commands_info_storage = servo_realisation.commands_abstraction.commads_storage.commands_info_storage
+servo_info_storage = servo_realisation.commands_abstraction.commads_storage.servo_info_storage
 
 
 class ControlServo:
@@ -26,7 +27,12 @@ class ControlServo:
         )
 
         self.command_reader = servo_realisation.commands_reader.input_output_realisation.create_servo_commands_reader()
-        self.current_mode = self.read_mode()
+        # self.current_mode = self.read_mode()
+        self.current_speed = self.read_speed()
+        self.current_pos = self.read_pos()
+
+        if self.servo.servo_id not in servo_info_storage.keys():
+            servo_info_storage[self.servo.servo_id] = servo_realisation.commands_abstraction.commads_storage.ServoData(speed=self.current_speed, pos=self.current_pos)
 
     # def simple_move_to_position(self, position: int):
     #     if self.current_mode != 1:
@@ -65,8 +71,8 @@ class ControlServo:
 
     def read_speed(self):
         command_id = '60810020'
-        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_answer_id = commands_info_storage[command_id].answer_code + self.servo.servo_id
+        command_send_address = commands_info_storage[command_id].send_address
 
         read_speed = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address
@@ -84,7 +90,7 @@ class ControlServo:
     def set_speed(self, value: int):
         command_id = '60810020'
         # command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_send_address = commands_info_storage[command_id].send_address
 
         set_speed = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address, write_value=value
@@ -102,8 +108,8 @@ class ControlServo:
 
     def read_pos(self):
         command_id = '60640020'
-        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_answer_id = commands_info_storage[command_id].answer_code + self.servo.servo_id
+        command_send_address = commands_info_storage[command_id].send_address
 
         read_pos = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address
@@ -145,8 +151,8 @@ class ControlServo:
 
     def read_mode(self):
         command_id = '60600008'
-        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_answer_id = commands_info_storage[command_id].answer_code + self.servo.servo_id
+        command_send_address = commands_info_storage[command_id].send_address
 
         read_mode = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address
@@ -165,7 +171,7 @@ class ControlServo:
     def set_mode(self, value: int):
         command_id = '60640020'
         # command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_send_address = commands_info_storage[command_id].send_address
 
         set_mode = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address, write_value=value
@@ -224,8 +230,8 @@ class ControlServo:
 
     def save_settings(self):
         command_id = '26140010'
-        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        command_answer_id = commands_info_storage[command_id].answer_code + self.servo.servo_id
+        command_send_address = commands_info_storage[command_id].send_address
 
         save_settings = self.servo_commander.create_command(
             command_from_documentation=command_id, address=command_send_address, write_value=1
