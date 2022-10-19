@@ -120,21 +120,27 @@ class ControlServo:
     def set_pos(self, value: int):
 
         if self.current_mode != 1:
-            print('MAY BE WRONG MODE')
+            print('WARNING MAY BE WRONG MODE')
 
-        command_id = '60640020'
-        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
-        command_send_address = commands_storage[command_id].send_address
+        
+        command_answer_id = 480 + self.servo.servo_id
+        command_send_address = 0x500 + self.servo.servo_id
 
-        set_pos = self.servo_commander.create_command(
-            command_from_documentation=command_id, address=command_send_address, write_value=value
-        )
+        write_value = self.servo_commander.only_convert_write_value_to_hex(write_value=value, num_of_bytes_for_command=4)
+        set_pos = canalystii.Message(
+                can_id=command_send_address,
+                remote=False,
+                extended=False,
+                data_len=len(write_value),
+                data=write_value,
+            )
 
         decoded_recieve = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
 
         while decoded_recieve.id != command_answer_id:
             self.servo.send(channel=0, messages=set_pos)
             recv = self.servo.receive(channel=0)
+            
             decoded_recieve = self.command_reader.read_recieve(recv)
 
         return decoded_recieve
@@ -175,11 +181,14 @@ class ControlServo:
             recv = self.servo.receive(channel=0)
             decoded_recieve = self.command_reader.read_recieve(recv)
 
+        self.current_mode = value
+
         return decoded_recieve
 
     def set_zero_pos(self):
         address = 0x600 + self.servo.servo_id
-        command_answer_id = 0x580 + self.servo.servo_id
+        print(600+self.servo.servo_id)
+        command_answer_id = 580 + self.servo.servo_id
         set_zero_part_1 = canalystii.Message(
             can_id=address,
             remote=False,
@@ -198,11 +207,12 @@ class ControlServo:
 
         decoded_recieve = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
 
-        while decoded_recieve.id != 580+self.servo.servo_id:
+        while decoded_recieve.id != command_answer_id:
             self.servo.send(channel=0, messages=set_zero_part_1)
             self.servo.send(channel=0, messages=set_zero_part_2)
 
             recv = self.servo.receive(channel=0)
+            print(recv)
             decoded_recieve = self.command_reader.read_recieve(recv)
 
         return decoded_recieve
@@ -213,3 +223,22 @@ class ControlServo:
         )
         
         self.servo.send(channel=0, messages=move_command)
+
+
+    def save_settings(self):
+        command_id = '26140010'
+        command_answer_id = commands_storage[command_id].answer_code + self.servo.servo_id
+        command_send_address = commands_storage[command_id].send_address
+
+        save_settings = self.servo_commander.create_command(
+            command_from_documentation=command_id, address=command_send_address, write_value=1
+        )
+
+        decoded_recieve = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
+
+        while decoded_recieve.id != command_answer_id:
+            self.servo.send(channel=0, messages=save_settings)
+            recv = self.servo.receive(channel=0)
+            decoded_recieve = self.command_reader.read_recieve(recv)
+
+        return decoded_recieve

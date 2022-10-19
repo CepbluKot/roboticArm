@@ -41,6 +41,7 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
         command_byte_second = command_from_documentation[2:4]
 
         if write_value:
+            write_value = int(write_value)
 
             result.append(get_bytes_code(num_of_bytes=num_of_bytes_for_command))
 
@@ -94,3 +95,30 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
                 can_id=address + self.servo.servo_id,
             )
             return final_command
+
+
+    def only_convert_write_value_to_hex(self, write_value: int, num_of_bytes_for_command: int):
+        if write_value:
+            result = []
+            write_value = int(write_value)
+
+            write_value = hex(write_value)[2:]
+
+            num_of_iterations = 0
+            while write_value:
+                result.append("0x" + write_value[-2:])
+                write_value = write_value[:-2]
+                num_of_iterations += 1
+
+            while num_of_bytes_for_command != num_of_iterations:
+                result.append("0x00")
+                num_of_iterations += 1
+
+            convert_to_hex = ()
+            for element in result:
+                convert_to_hex += (int(element, 0),)
+
+            return convert_to_hex
+        
+        else:
+            return (0x00, 0x00, 0x00, 0x00)

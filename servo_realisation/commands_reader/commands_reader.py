@@ -52,5 +52,4 @@ class CommandsReader(
             return recieved_command
 
         else:
-            recieved_command = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
             return recieved_command

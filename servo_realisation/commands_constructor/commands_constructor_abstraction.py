@@ -23,3 +23,6 @@ class CommandConstructorAbstraction(
             write_value=write_value,
             address=address,
         )
+
+    def only_convert_write_value_to_hex(self, write_value: int, num_of_bytes_for_command: int):
+        return self.interface.only_convert_write_value_to_hex(write_value=write_value, num_of_bytes_for_command=num_of_bytes_for_command)    

@@ -4,7 +4,7 @@ from time import sleep
 # # sleep(5)
 
 set_zero_1_1 = canalystii.Message(
-    can_id=0x605,
+    can_id=0x601,
     remote=False,
     extended=False,
     data_len=6,
@@ -12,7 +12,7 @@ set_zero_1_1 = canalystii.Message(
 )
 
 set_zero_2_1 = canalystii.Message(
-    can_id=0x605,
+    can_id=0x601,
     remote=False,
     extended=False,
     data_len=6,
@@ -22,7 +22,7 @@ set_zero_2_1 = canalystii.Message(
 
 
 set_zero_1_2 = canalystii.Message(
-    can_id=0x606,
+    can_id=0x602,
     remote=False,
     extended=False,
     data_len=6,
@@ -30,7 +30,7 @@ set_zero_1_2 = canalystii.Message(
 )
 
 set_zero_2_2 = canalystii.Message(
-    can_id=0x606,
+    can_id=0x602,
     remote=False,
     extended=False,
     data_len=6,
