@@ -40,12 +40,15 @@ class CommandsReader(
 
         elif num_of_bytes_to_read == "43":
             decoded_data = ""
-            decoded_data += recieve[4]
-            decoded_data += recieve[3]
-            decoded_data += recieve[2]
-            decoded_data += recieve[1]
+            decoded_data += data[4]
+            decoded_data += data[3]
+            decoded_data += data[2]
+            decoded_data += data[1]
 
             recieved_command.decoded_data = int(decoded_data, 16)
+            return recieved_command
+
+        elif num_of_bytes_to_read == "60":
             return recieved_command
 
         else:

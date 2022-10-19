@@ -9,6 +9,7 @@ class CommandData():
 
 
 commands_storage: typing.Dict[str, CommandData] = {
-    "60600008": CommandData(answer_code=580, send_address=0x600),
-    "60810020": CommandData(answer_code=580, send_address=0x600),
+    "60600008": CommandData(answer_code=580, send_address=0x600), # mode
+    "60810020": CommandData(answer_code=580, send_address=0x600), # speed 
+    "60640020": CommandData(answer_code=580, send_address=0x600), # pos
 }
