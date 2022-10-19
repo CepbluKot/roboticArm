@@ -1,5 +1,5 @@
 import servo_realisation.commands_reader.commands_reader_interface
-
+import servo_realisation.commands_reader.commands_reader_data_structures
 
 class CommandsReaderAbstraction(
     servo_realisation.commands_reader.commands_reader_interface.CommandsReaderInterface

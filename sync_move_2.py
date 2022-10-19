@@ -4,6 +4,10 @@ import servo_realisation.control_objects.input_output_realisation
 import servo_realisation.commands_constructor.commands_constructor_interface
 import servo_realisation.control_objects.servo_interface
 
+
+import servo_realisation.commands_abstraction.input_output_realisation
+
+
 servo_1 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=1
 )
@@ -144,7 +148,7 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     servo_1.send(channel=0, messages=start_move_to_target_pos)
 
 
-move_to_pos_sync(servo_1_target_pos=30, servo_2_target_pos=30)
+# move_to_pos_sync(servo_1_target_pos=30, servo_2_target_pos=30)
 
 
 
@@ -185,11 +189,20 @@ move_to_pos_sync(servo_1_target_pos=30, servo_2_target_pos=30)
 
 
 
-# read_speed_5 = servo_5_constructor.create_command(address=0x600, command_from_documentation='60810020')
-# servo_5.send(channel=0, messages=read_speed_5)
+
+abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(servo_object=servo_1)
+red = abs.read_speed()
+print(red.decoded_data)
+
+
+# check_mode = servo_1_constructor.create_command(
+#             command_from_documentation="60600008", address=0x600
+#         )
+
+# read_speed_1 = servo_1_constructor.create_command(address=0x600, command_from_documentation='60810020')
+
 
 # while 1:
+#     servo_1.send(channel=0, messages=read_speed_1)
 #     read = servo_1.receive(0)
-
 #     print(read)
-
