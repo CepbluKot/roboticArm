@@ -3,3 +3,6 @@ import servo_realisation.control_objects.servo_interface
 
 def create_servo_commands_abstraction(servo_object: servo_realisation.control_objects.servo_interface.ServoInterface):
     return servo_realisation.commands_abstraction.commands.ControlServo(servo_object=servo_object)
+
+def create_servo_commands_abstraction_can(servo_object: servo_realisation.control_objects.servo_interface.ServoInterfaceCan):
+    return servo_realisation.commands_abstraction.commands.ControlServoCan_test_2(servo_object=servo_object)

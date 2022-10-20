@@ -10,5 +10,5 @@ class CommandsReaderAbstraction(
     ) -> None:
         self.interface = interface
 
-    def read_recieve(self, recieve: str):
+    def read_recieve(self, recieve):
         return self.interface.read_recieve(recieve=recieve)

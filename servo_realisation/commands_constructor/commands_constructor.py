@@ -1,6 +1,7 @@
 import canalystii
 import servo_realisation.control_objects.servo_interface
 import servo_realisation.commands_constructor.commands_constructor_interface
+import can
 
 
 def get_bytes_code(num_of_bytes: int = None, is_read: bool = False):
@@ -67,6 +68,8 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
             for element in result:
                 convert_to_hex += (int(element, 0),)
 
+
+
             final_command = canalystii.Message(
                 remote=False,
                 extended=False,
@@ -88,6 +91,8 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
             convert_to_hex = ()
             for element in result:
                 convert_to_hex += (int(element, 0),)
+
+
 
             final_command = canalystii.Message(
                 remote=False,
@@ -124,3 +129,100 @@ class CommandConstructor(servo_realisation.commands_constructor.commands_constru
         
         else:
             return (0x00, 0x00, 0x00, 0x00)
+
+
+
+class CommandConstructorCan(servo_realisation.commands_constructor.commands_constructor_interface.CommandConstructorInterface):
+    def __init__(
+        self,
+        servo_object: servo_realisation.control_objects.servo_interface.ServoInterfaceCan,
+    ):
+        self.servo = servo_object
+
+    def general_move_command(self):
+        final_command = can.Message(arbitration_id=0x80, is_extended_id=True)
+        return final_command
+
+    def create_command(
+        self, address: int, command_from_documentation: str, write_value: int = None
+    ):
+        result = []
+        num_of_bytes_for_command = int(int(command_from_documentation[-2:], 16) / 8)
+
+        command_byte_first = command_from_documentation[:2]
+        command_byte_second = command_from_documentation[2:4]
+
+        if write_value:
+            # print('RECIEVED SPEED', write_value)
+            write_value = round(write_value)
+            # print('SET SPEED', write_value)
+
+            result.append(get_bytes_code(num_of_bytes=num_of_bytes_for_command))
+
+            result.append("0x" + command_byte_second)
+            result.append("0x" + command_byte_first)
+            result.append("0x00")
+
+            write_value = hex(write_value)[2:]
+
+            num_of_iterations = 0
+            while write_value:
+                result.append("0x" + write_value[-2:])
+                write_value = write_value[:-2]
+                num_of_iterations += 1
+
+            while num_of_bytes_for_command != num_of_iterations:
+                result.append("0x00")
+                num_of_iterations += 1
+
+            convert_to_hex = []
+            for element in result:
+                convert_to_hex.append(int(element, 0),)
+
+            final_command = can.Message(is_extended_id=False, data=convert_to_hex, arbitration_id=address + self.servo.servo_id)
+
+
+            return final_command
+
+        else:
+            result.append(
+                get_bytes_code(num_of_bytes=num_of_bytes_for_command, is_read=True)
+            )
+            result.append("0x" + command_byte_second)
+            result.append("0x" + command_byte_first)
+            result.append("0x00")
+
+            convert_to_hex = []
+            for element in result:
+                convert_to_hex.append(int(element, 0),)
+
+            final_command = can.Message(is_extended_id=False, data=convert_to_hex, arbitration_id=address + self.servo.servo_id)
+
+            return final_command
+
+
+    def only_convert_write_value_to_hex(self, write_value: int, num_of_bytes_for_command: int):
+        if write_value:
+            result = []
+            write_value = int(write_value)
+
+            write_value = hex(write_value)[2:]
+
+            num_of_iterations = 0
+            while write_value:
+                result.append("0x" + write_value[-2:])
+                write_value = write_value[:-2]
+                num_of_iterations += 1
+
+            while num_of_bytes_for_command != num_of_iterations:
+                result.append("0x00")
+                num_of_iterations += 1
+
+            convert_to_hex = []
+            for element in result:
+                convert_to_hex.append(int(element, 0),)
+
+            return convert_to_hex
+        
+        else:
+            return [0x00, 0x00, 0x00, 0x00]

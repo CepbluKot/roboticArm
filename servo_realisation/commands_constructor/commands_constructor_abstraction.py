@@ -17,7 +17,7 @@ class CommandConstructorAbstraction(
 
     def create_command(
         self, address: int, command_from_documentation: str, write_value: int = None
-    ) -> canalystii.Message:
+    ):
         return self.interface.create_command(
             command_from_documentation=command_from_documentation,
             write_value=write_value,
