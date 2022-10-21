@@ -6,5 +6,6 @@ class RecievedCommand():
         self.id = id
         self.ts = ts
         self.data = data
+        self.servo_id = int()
         self.decoded_data = int()
         self.command_data = str()

@@ -16,7 +16,7 @@ class ServoAbstraction(
         return self.interface.receive(channel=channel)
 
     def send(self, channel: int, messages):
-        return self.interface.send(channel=channel, message=messages)
+        return self.interface.send(channel=channel, messages=messages)
 
 
 class ServoAbstractionCan(servo_realisation.control_objects.servo_interface.ServoInterfaceCan):

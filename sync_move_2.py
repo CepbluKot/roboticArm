@@ -1,3 +1,8 @@
+import threading
+import can
+import time
+
+
 import servo_realisation.commands_constructor.input_output_realisation
 import servo_realisation.commands_reader.input_output_realisation
 import servo_realisation.control_objects.input_output_realisation
@@ -8,66 +13,94 @@ import servo_realisation.commands_abstraction.commands
 import servo_realisation.commands_abstraction.input_output_realisation
 
 
-servo_1 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+import servo_realisation.commands_reader.input_output_realisation
+
+import servo_realisation.thread_readr.thread_reader
+
+import servo_realisation.commands_abstraction.commads_storage
+
+# servo_1 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=1
+# )
+# servo_2 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=2
+# )
+# servo_3 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=3
+# )
+# servo_4 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=4
+# )
+# servo_5 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=5
+# )
+# servo_6 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+#     servo_id=6
+# )
+
+
+servo_1 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=1
 )
-servo_2 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+servo_2 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=2
 )
-servo_3 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+servo_3 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=3
 )
-servo_4 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+servo_4 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=4
 )
-servo_5 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+servo_5 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=5
 )
-servo_6 = servo_realisation.control_objects.input_output_realisation.create_servo_object_can(
+servo_6 = servo_realisation.control_objects.input_output_realisation.create_servo_object(
     servo_id=6
 )
 
+# servo_1_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_1
+# )
+# servo_2_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_2
+# )
+# servo_3_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_3
+# )
+# servo_4_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_4
+# )
+# servo_5_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_5
+# )
+# servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+#     servo_object=servo_6
+# )
 
-servo_1_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_1_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_1
 )
-servo_2_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_2_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_2
 )
-servo_3_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_3_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_3
 )
-servo_4_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_4_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_4
 )
-servo_5_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_5_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_5
 )
-servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction_can(
+servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(
     servo_object=servo_6
 )
 
 
+def thread_operations():
+    pass
+# todo
 
-# def get_servo_current_parameters(servo_abs_object: servo_realisation.commands_abstraction.commands.ControlServo, target_pos: int):
-#     servo_current_speed = servo_abs_object.read_speed()
-#     servo_current_pos = servo_abs_object.read_pos()
-#     if servo_current_pos >= 42949672900:
-#         servo_current_pos = 0
-    
-#     servo_target_pos = int(32768 * 50 /360 * target_pos)
-#     servo_1_distance_delta = abs(servo_current_pos - servo_target_pos)
-
-
-    
-#     default_speed = 30
-#     if not servo_1_current_speed:
-#         servo_1_abs.set_speed(value=default_speed)
-#         servo_1_current_speed = default_speed
-
-#     if not servo_2_current_speed:
-#         servo_2_abs.set_speed(value=default_speed)
-#         servo_2_current_speed = default_speed
 
 
 def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_pos=0, servo_4_target_pos=0, servo_5_target_pos=0, servo_6_target_pos=0):
@@ -173,23 +206,121 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
 
 
 def reader():
+    print('start read')
+    start_time = 0
     while True:
-        read_1 = servo_1.receive(0)
-        print("read_1", read_1)
-        read_2 = servo_2.receive(0)
-        print("read_2", read_2)
+        tem = time.time()
+        if tem - start_time >= 1:
+            print('1 sec passed')
+            start_time = tem
+        
+        read_1 = servo_1.receive(channel=0)
+        # read_1 = servo_1_abs.decode_everyth(read_1)
+        # if read_1.arbitration_id == 0x581:
+            # tiem = time.time()
+            # print(  "!!!      read ", read_1)
+            # recv_time = tiem
+        print(read_1)
+        # print(read_1.id, read_1.ts)
 
+def test_writer():
+    print('start write')
+    # start_time = time.time()
+    
+    a = [servo_1_abs, servo_2_abs, servo_3_abs, servo_4_abs, servo_5_abs, servo_6_abs, ]
+    while True:
+        # if time.time() - start_time >= 0.1:
+
+            for x in a:
+                x.read_speed()
+                print('sent', x.servo.servo_id)
+
+            # servo_1_abs.read_speed()
+            # start_time = time.time()
 
 def writer():
-    while 1:
+    # while 1:
         a, b = input('input').split(' ')
         # print(int(a), int(b))
         move_to_pos_sync(servo_1_target_pos=int(a), servo_2_target_pos=int(b))
 
-writer()
 
-# print('servo_1_abs',servo_1_abs.read_pos().decoded_data)
-# print('servo_2_abs',servo_2_abs.read_pos().decoded_data)
+def write_test_2():
+    # while 1:
+        print('sent sped')
+
+        servo_1_abs.read_speed()
+        time.sleep(1)
+
+
+        print('sent mod')
+
+        servo_1_abs.read_mode()
+        time.sleep(1)
+
+        print('sent pos')
+
+        servo_1_abs.read_pos()
+        time.sleep(1)
+
+
+
+
+
+
+# def write_test_3():
+#     while 1:
+#         a = [servo_1_abs,  servo_2_abs,servo_3_abs,servo_4_abs,servo_5_abs,servo_6_abs,]
+#         for x in a:
+#             x.set_speed(20)
+
+
+
+redr = servo_realisation.commands_reader.input_output_realisation.create_servo_commands_reader()
+servo_info_storage = servo_realisation.commands_abstraction.commads_storage.servo_info_storage
+
+def read_test_2():
+    while 1:
+        
+
+
+        # res2 = servo_1_abs.decode_everyth(res)
+        
+        res = servo_1.receive(0)
+        res2 = []
+        for elem in res:
+            elem = redr.read_recieve(recieve=elem)
+            res2.append(elem)
+
+
+
+# writer()
+
+# read_thread = threading.Thread(target=read_test_2)
+# write_thread = threading.Thread(target=write_test_2)
+# write_thread.start()
+# read_thread.start()
+
+
+can_obj = servo_realisation.control_objects.input_output_realisation.get_can_object()
+
+# write_test_2()
+
+# write_test_2()
+
+# write_test_2()
+write_thread = threading.Thread(target=write_test_2)
+read_thread = threading.Thread(target=servo_realisation.thread_readr.thread_reader.thread_reader, args=(can_obj, ))
+write_thread.start()
+read_thread.start()
+
+
+# while 1:
+#     a = [servo_1_abs, servo_2_abs, servo_3_abs, servo_4_abs, servo_5_abs, servo_6_abs, ]
+#     for x in a:
+
+#         x.read_speed()
+#     print(servo_1.receive(0))
 
 
 # while 1:

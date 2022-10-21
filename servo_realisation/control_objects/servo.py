@@ -11,7 +11,7 @@ class Servo(servo_realisation.control_objects.servo_interface.ServoInterface):
         self.device = device_object
 
     def receive(self, channel: int):
-        read = 0
+        read = self.device.receive(channel=channel)
         while not read:
             read = self.device.receive(channel=channel)
         return read
