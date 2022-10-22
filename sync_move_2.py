@@ -100,17 +100,17 @@ servo_6_abs = servo_realisation.commands_abstraction.input_output_realisation.cr
 )
 
 
-# servo_1_abs.set_mode(1)
+servo_1_abs.set_mode(1)
 
-# servo_2_abs.set_mode(1)
+servo_2_abs.set_mode(1)
 
-# servo_3_abs.set_mode(1)
+servo_3_abs.set_mode(1)
 
-# servo_4_abs.set_mode(1)
+servo_4_abs.set_mode(1)
 
-# servo_5_abs.set_mode(1)
+servo_5_abs.set_mode(1)
 
-# servo_6_abs.set_mode(1)
+servo_6_abs.set_mode(1)
 '''
 class ServoThreadOperations():
     def __init__(self, servo_abstraction: servo_realisation.commands_abstraction.commands.ControlServoThread, servo_info_storage: typing.Dict[int, servo_realisation.commands_abstraction.commads_storage.ServoData]) -> None:

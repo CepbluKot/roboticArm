@@ -37,12 +37,12 @@ servo_5_thread_controller = servo_realisation.commands_abstraction.input_output_
 servo_6_thread_controller = servo_realisation.commands_abstraction.input_output_realisation.create_servo_commands_abstraction(servo_object=servo_6)
 
 
-servo_1_thread_controller.set_zero_pos()
-servo_2_thread_controller.set_zero_pos()
-servo_3_thread_controller.set_zero_pos()
-servo_4_thread_controller.set_zero_pos()
-servo_5_thread_controller.set_zero_pos()
-servo_6_thread_controller.set_zero_pos()
+# servo_1_thread_controller.set_zero_pos()
+# servo_2_thread_controller.set_zero_pos()
+# servo_3_thread_controller.set_zero_pos()
+# servo_4_thread_controller.set_zero_pos()
+# servo_5_thread_controller.set_zero_pos()
+# servo_6_thread_controller.set_zero_pos()
 
 
 class AxisData:
@@ -69,13 +69,21 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     axis_6_max_value = 180
 
 
+    axis_1_max_value = int(32768 * 50 /360 * axis_1_max_value)
+    axis_2_max_value = int(32768 * 50 /360 * axis_2_max_value)
+    axis_3_max_value = int(32768 * 50 /360 * axis_3_max_value)
+    axis_4_max_value = int(32768 * 50 /360 * axis_4_max_value)
+    axis_5_max_value = int(32768 * 50 /360 * axis_5_max_value)
+    axis_6_max_value = int(32768 * 50 /360 * axis_6_max_value)
+
+    
     axis_data: Dict[int, AxisData] = {
         1: AxisData(max_value=axis_1_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_1_target_pos), distance_delta=0, servo_object_thread=servo_1_thread_controller),
         2: AxisData(max_value=axis_2_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_2_target_pos), distance_delta=0, servo_object_thread=servo_2_thread_controller),
         3: AxisData(max_value=axis_3_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_3_target_pos), distance_delta=0, servo_object_thread=servo_3_thread_controller),
         4: AxisData(max_value=axis_4_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_4_target_pos), distance_delta=0, servo_object_thread=servo_4_thread_controller),
         5: AxisData(max_value=axis_5_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_5_target_pos), distance_delta=0, servo_object_thread=servo_5_thread_controller),
-        6: AxisData(max_value=axis_6_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_6_target_pos), distance_delta=0, servo_object_thread=servo_6_thread_controller),
+        # 6: AxisData(max_value=axis_6_max_value, acceleration=default_acceleration, current_speed=default_speed, target_speed=0, current_pos=0, target_pos=int(32768 * 50 /360 * servo_6_target_pos), distance_delta=0, servo_object_thread=servo_6_thread_controller),
     }
 
 
@@ -120,6 +128,21 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     servo_1_thread_controller.general_move_command()
 
 
-# can_obj = servo_realisation.control_objects.input_output_realisation.get_can_object()
-# read_thread = threading.Thread(target=servo_realisation.thread_readr.thread_reader.thread_reader, args=(can_obj, ), daemon=True)
-# read_thread.start()
+can_obj = servo_realisation.control_objects.input_output_realisation.get_can_object()
+read_thread = threading.Thread(target=servo_realisation.thread_readr.thread_reader.thread_reader, args=(can_obj, ), daemon=True)
+read_thread.start()
+
+
+# move_to_pos_sync(45, 45, 45, 45, 45)
+move_to_pos_sync(0, 0, 0, 0, 0)
+# servo_1_thread_controller.set_mode(1)
+
+# servo_2_thread_controller.set_mode(1)
+
+# servo_3_thread_controller.set_mode(1)
+
+# servo_4_thread_controller.set_mode(1)
+
+# servo_5_thread_controller.set_mode(1)
+
+# servo_6_thread_controller.set_mode(1)
