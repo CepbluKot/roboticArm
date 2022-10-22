@@ -32,6 +32,7 @@ class ServoData():
         self.pos = -1
         self.mode = -1
         self.saved = -1
+        self.acceleration = -1
         self.servo_id = servo_id
         self.target_pos = -1
         self.commands_info_storage: typing.Dict[str, ServoCommandData] = {
@@ -39,7 +40,8 @@ class ServoData():
             "6081": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.speed, is_new_value=0), # speed 
             "6064": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.pos, is_new_value=0), # pos
             "2614": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.saved, is_new_value=0), # save  
-            "interpolation": ServoCommandData(answer_code=0x480+self.servo_id, send_address=0x500+self.servo_id, value_link=self.target_pos, is_new_value=1) # interpol (target pos)
+            "interpolation": ServoCommandData(answer_code=0x480+self.servo_id, send_address=0x500+self.servo_id, value_link=self.target_pos, is_new_value=1), # interpol (target pos)
+            "6083": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.acceleration, is_new_value=0), # acceleration
                 }
 
     def read_speed(self):
@@ -51,6 +53,9 @@ class ServoData():
     def read_mode(self):
         return self.commands_info_storage["6060"].read_value()
 
+    def read_acceleration(self):
+        return self.commands_info_storage["6083"].read_value()
+
     # def read_target_pos_value(self):
     #     return self.commands_info_storage["interpolation"].read_value()
 
@@ -59,6 +64,9 @@ class ServoData():
 
     def set_mode_value(self,  value):
         self.commands_info_storage["6060"].set_value(value=value)
+
+    def set_acceleration_value(self, value):
+        self.commands_info_storage["6083"].set_value(value=value)
 
     # def set_target_pos_value(self,  value):
     #     self.commands_info_storage["interpolation"].set_value(value=value)
@@ -72,6 +80,9 @@ class ServoData():
     def set_current_pos_flag(self,  value: bool):
         self.commands_info_storage["6064"].set_flag(value=value)
     
+
+    def set_acceleration_flag(self, value: bool):
+        return self.commands_info_storage["6083"].set_value(value=value)
 
     # def set_target_pos_flag(self,  value: bool):
     #     self.commands_info_storage["interpolation"].set_flag(value=value)
@@ -87,6 +98,9 @@ class ServoData():
 
     def read_target_pos_flag(self,  ):
         return self.commands_info_storage["interpolation"].read_flag()
+
+    def read_acceleration_flag(self):
+        return self.commands_info_storage["6083"].read_flag()
 
 
 servo_info_storage: typing.Dict[int, ServoData] = {

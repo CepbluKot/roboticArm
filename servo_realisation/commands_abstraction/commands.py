@@ -402,7 +402,7 @@ class ControlServoThread:
 
         # while decoded_recieve.id != command_answer_id:
         self.servo.send(channel=0, messages=[set_zero_part_1, set_zero_part_2])
-        self.read_pos()
+        # self.read_pos()
         # self.servo.send(channel=0, messages=set_zero_part_2)
 
         #     recv = self.servo.receive(channel=0)
@@ -457,6 +457,40 @@ class ControlServoThread:
         )
         self.servo.send(channel=0, message=final_command)
         
+
+    def set_acceleration(self, value):
+        command_id = '60830020'
+        command_data_in_servo_data = self.current_servo_data.commands_info_storage[command_id[:4]]
+
+        command_send_address = command_data_in_servo_data.send_address
+
+
+        set_speed_command = self.servo_commander.create_command(
+            command_from_documentation=command_id, address=command_send_address, write_value=value
+        )
+
+        self.current_servo_data.set_acceleration_flag(0)
+        self.servo.send(channel=0, messages=set_speed_command)
+        self.read_acceleration()
+    
+
+    def read_acceleration(self):
+        command_id = '60830020'
+        command_data_in_servo_data = self.current_servo_data.commands_info_storage[command_id[:4]]
+        command_send_address = command_data_in_servo_data.send_address
+
+        read_pos_command = self.servo_commander.create_command(
+            command_from_documentation=command_id, address=command_send_address
+        )
+        self.current_servo_data.set_acceleration_flag(0)
+        self.servo.send(channel=0, messages=read_pos_command)
+
+        print('wait accel  start')
+        while not self.current_servo_data.read_acceleration_flag():
+            self.servo.send(channel=0, messages=read_pos_command)
+           
+        print('wait accel  end')
+        return self.current_servo_data.read_acceleration()
 
 
 class ControlServoCan:
