@@ -14,6 +14,8 @@ class CommandsReader(
         recieve = str(recieve)
 
         id = int(recieve[recieve.index('ID=') + len('ID=') + 2: recieve.index(' TS=')])
+
+        
         servo_id = id % 10
         ts = int(recieve[recieve.index('TS=') + len('TS=') + 2: recieve.index(' Data=')], 16)
         data = recieve[recieve.index("Data=") + len("Data=") :]

@@ -1,8 +1,10 @@
 import servo_realisation.commands_abstraction.commands
 import servo_realisation.control_objects.servo_interface
 
+import servo_realisation.commands_abstraction.commads_storage 
+
 def create_servo_commands_abstraction(servo_object: servo_realisation.control_objects.servo_interface.ServoInterface):
-    return servo_realisation.commands_abstraction.commands.ControlServo(servo_object=servo_object)
+    return servo_realisation.commands_abstraction.commands.ControlServoThread(servo_object=servo_object, servo_info_storage=servo_realisation.commands_abstraction.commads_storage.servo_info_storage)
 
 def create_servo_commands_abstraction_can(servo_object: servo_realisation.control_objects.servo_interface.ServoInterfaceCan):
     return servo_realisation.commands_abstraction.commands.ControlServoCan_test_2(servo_object=servo_object)

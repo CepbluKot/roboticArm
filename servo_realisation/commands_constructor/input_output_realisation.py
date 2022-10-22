@@ -7,7 +7,7 @@ import can
 def create_servo_command_constructor(
     servo_object: servo_realisation.control_objects.servo_interface.ServoInterface
 ):
-    commands_constructor = servo_realisation.commands_constructor.commands_constructor.CommandConstructor(
+    commands_constructor = servo_realisation.commands_constructor.commands_constructor.CommandConstructorThread(
         servo_object=servo_object
     )
     commands_constructor_abs = servo_realisation.commands_constructor.commands_constructor_abstraction.CommandConstructorAbstraction(
