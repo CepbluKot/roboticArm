@@ -80,7 +80,7 @@ class ControlServo:
             # decoded_recieve = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
 
             # while decoded_recieve.id != command_answer_id:
-            # print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
+            # # print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
             self.servo.send(channel=0, messages=set_speed)
             # servo_info_storage[self.servo.servo_id].speed = set_speed
             # recv = self.servo.receive(channel=0)
@@ -127,7 +127,7 @@ class ControlServo:
             # decoded_recieve = servo_realisation.commands_reader.commands_reader_data_structures.RecievedCommand(id=-1, ts="", data="")
 
             # while decoded_recieve.id != command_answer_id:
-            # print('SET_POS=', value, 'SERVO', self.servo.servo_id)
+            # # print('SET_POS=', value, 'SERVO', self.servo.servo_id)
             self.servo.send(channel=0, messages=set_pos)
             # servo_info_storage[self.servo.servo_id].pos = value
             # recv = self.servo.receive(channel=0)
@@ -203,7 +203,7 @@ class ControlServo:
         move_command = canalystii.Message(
             remote=False, extended=False, data_len=0, can_id=0x80
         )
-        print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
+        # print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
         self.servo.send(channel=0, messages=move_command)
 
     def save_settings(self):
@@ -274,11 +274,11 @@ class ControlServoThread:
         
         self.servo.send(channel=0, messages=read_speed_command)
         
-        print('wait sped red start')
+        # print('wait sped red start')
         while not self.current_servo_data.read_speed_flag():
             self.servo.send(channel=0, messages=read_speed_command)
             
-        print('wait sped red end')
+        # print('wait sped red end')
 
         return self.current_servo_data.read_speed()
         
@@ -313,17 +313,18 @@ class ControlServoThread:
         self.current_servo_data.set_current_pos_flag(0)
         self.servo.send(channel=0, messages=read_pos_command)
 
-        print('wait pos red start')
+        # print('wait pos red start')
         while not self.current_servo_data.read_current_pos_flag():
             self.servo.send(channel=0, messages=read_pos_command)
             
            
-        print('wait pos red end')
+        # print('wait pos red end')
         return self.current_servo_data.read_current_pos()
 
 
     def set_pos(self, value: int):
             command_send_address = 0x500 + self.servo.servo_id
+            command_data_in_servo_data = self.current_servo_data.commands_info_storage["interpolation"]
 
             write_value = self.servo_commander.only_convert_write_value_to_hex(
                 write_value=value, num_of_bytes_for_command=4)
@@ -335,9 +336,12 @@ class ControlServoThread:
                 data_len=len(write_value),
                 data=write_value,
             )
+            command_data_in_servo_data.set_flag(0)
 
-            self.servo.send(channel=0, messages=set_pos_command)
-
+            while not command_data_in_servo_data.read_flag():
+                self.servo.send(channel=0, messages=set_pos_command)
+                
+            # print('send pos done', self.servo.servo_id)
 
     def read_mode(self):
         command_id = '60600008'
@@ -353,11 +357,11 @@ class ControlServoThread:
         self.servo.send(channel=0, messages=read_mode_command)
 
 
-        print('wait mod red start')
+        # print('wait mod red start')
         while not self.current_servo_data.read_mode_flag():
             self.servo.send(channel=0, messages=read_mode_command)
         
-        print('wait mod red end')
+        # print('wait mod red end')
         return self.current_servo_data.read_mode()
 
     def set_mode(self, value: int):
@@ -374,13 +378,13 @@ class ControlServoThread:
             self.read_mode()
 
             
-            print('mode set done')
+            # print('mode set done')
 
-        # print('mode set - same val')
+        # # print('mode set - same val')
 
     def set_zero_pos(self):
         address = 0x600 + self.servo.servo_id
-        # print(600+self.servo.servo_id)
+        # # print(600+self.servo.servo_id)
         # command_answer_id = 580 + self.servo.servo_id
         set_zero_part_1 = canalystii.Message(
             can_id=address,
@@ -406,7 +410,7 @@ class ControlServoThread:
         # self.servo.send(channel=0, messages=set_zero_part_2)
 
         #     recv = self.servo.receive(channel=0)
-        #     print(recv)
+        #     # print(recv)
         #     decoded_recieve = self.command_reader.read_recieve(recv)
 
         # return decoded_recieve
@@ -415,7 +419,7 @@ class ControlServoThread:
         move_command = canalystii.Message(
             remote=False, extended=False, data_len=0, can_id=0x80
         )
-        print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
+        # print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
         self.servo.send(channel=0, messages=move_command)
 
     def save_settings(self):
@@ -485,11 +489,11 @@ class ControlServoThread:
         self.current_servo_data.set_acceleration_flag(0)
         self.servo.send(channel=0, messages=read_pos_command)
 
-        print('wait accel  start')
+        # print('wait accel  start')
         while not self.current_servo_data.read_acceleration_flag():
             self.servo.send(channel=0, messages=read_pos_command)
            
-        print('wait accel  end')
+        # print('wait accel  end')
         return self.current_servo_data.read_acceleration()
 
 
@@ -555,7 +559,7 @@ class ControlServoCan:
                 id=-1, ts="", data="")
 
             while decoded_recieve.id != command_answer_id:
-                print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
+                # print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
                 self.servo.send(message=set_speed)
                 recv = self.servo.receive()
                 decoded_recieve = self.command_reader.read_recieve(recv)
@@ -604,7 +608,7 @@ class ControlServoCan:
                 id=-1, ts="", data="")
 
             while decoded_recieve.id != command_answer_id:
-                print('SET_POS=', value, 'SERVO', self.servo.servo_id)
+                # print('SET_POS=', value, 'SERVO', self.servo.servo_id)
                 self.servo.send(message=set_pos)
                 recv = self.servo.receive()
                 decoded_recieve = self.command_reader.read_recieve(recv)
@@ -660,7 +664,7 @@ class ControlServoCan:
 
     def set_zero_pos(self):
         address = 0x600 + self.servo.servo_id
-        # print(600+self.servo.servo_id)
+        # # print(600+self.servo.servo_id)
         # command_answer_id = 580 + self.servo.servo_id
         set_zero_part_1 = can.Message(
             arbitration_id=address,
@@ -683,7 +687,7 @@ class ControlServoCan:
         # self.servo.send( messages=set_zero_part_2)
 
         #     recv = self.servo.receive()
-        #     print(recv)
+        #     # print(recv)
         #     decoded_recieve = self.command_reader.read_recieve(recv)
 
         # return decoded_recieve
@@ -692,7 +696,7 @@ class ControlServoCan:
         move_command = can.Message(
             is_extended_id=False, arbitration_id=0x80
         )
-        print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
+        # print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
         self.servo.send(message=move_command)
 
     def save_settings(self):
@@ -782,7 +786,7 @@ class ControlServoCan_test:
             self.servo.send(message=set_speed)
             recv: can.Message = self.servo.receive()
             while recv.arbitration_id != command_answer_id:
-                print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
+                # print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
                 self.servo.send(message=set_speed)
                 recv = self.servo.receive()
             decoded_recieve = self.command_reader.read_recieve(recv)
@@ -836,7 +840,7 @@ class ControlServoCan_test:
             recv: can.Message = self.servo.receive()
 
             while recv.arbitration_id != command_answer_id:
-                print('SET_POS=', value, 'SERVO', self.servo.servo_id)
+                # print('SET_POS=', value, 'SERVO', self.servo.servo_id)
                 self.servo.send(message=set_pos)
                 recv = self.servo.receive()
             decoded_recieve = self.command_reader.read_recieve(recv)
@@ -898,7 +902,7 @@ class ControlServoCan_test:
 
     def set_zero_pos(self):
         address = 0x600 + self.servo.servo_id
-        # print(600+self.servo.servo_id)
+        # # print(600+self.servo.servo_id)
         # command_answer_id = 580 + self.servo.servo_id
         set_zero_part_1 = can.Message(
             arbitration_id=address,
@@ -921,7 +925,7 @@ class ControlServoCan_test:
         # self.servo.send( messages=set_zero_part_2)
 
         #     recv = self.servo.receive()
-        #     print(recv)
+        #     # print(recv)
         #     decoded_recieve = self.command_reader.read_recieve(recv)
 
         # return decoded_recieve
@@ -930,7 +934,7 @@ class ControlServoCan_test:
         move_command = can.Message(
             is_extended_id=False, arbitration_id=0x80
         )
-        print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
+        # print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
         self.servo.send(message=move_command)
 
     def save_settings(self):
@@ -1022,7 +1026,7 @@ class ControlServoCan_test_2:
             self.servo.send(message=set_speed)
             # recv: can.Message = self.servo.receive()
             # while recv.arbitration_id != command_answer_id:
-            #     print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
+            #     # print('SET_SPEED=', value, 'SERVO', self.servo.servo_id)
             #     self.servo.send(message=set_speed)
             #     recv = self.servo.receive()
             # decoded_recieve = self.command_reader.read_recieve(recv)
@@ -1076,7 +1080,7 @@ class ControlServoCan_test_2:
             # recv: can.Message = self.servo.receive()
 
             # while recv.arbitration_id != command_answer_id:
-            #     print('SET_POS=', value, 'SERVO', self.servo.servo_id)
+            #     # print('SET_POS=', value, 'SERVO', self.servo.servo_id)
             #     self.servo.send( message=set_pos)
             #     recv = self.servo.receive()
             # decoded_recieve = self.command_reader.read_recieve(recv)
@@ -1137,7 +1141,7 @@ class ControlServoCan_test_2:
 
     def set_zero_pos(self):
         address = 0x600 + self.servo.servo_id
-        # print(600+self.servo.servo_id)
+        # # print(600+self.servo.servo_id)
         # command_answer_id = 580 + self.servo.servo_id
         set_zero_part_1 = can.Message(
             arbitration_id=address,
@@ -1161,7 +1165,7 @@ class ControlServoCan_test_2:
         # self.servo.send( messages=set_zero_part_2)
 
         #     recv = self.servo.receive()
-        #     print(recv)
+        #     # print(recv)
         #     decoded_recieve = self.command_reader.read_recieve(recv)
 
         # return decoded_recieve
@@ -1170,7 +1174,7 @@ class ControlServoCan_test_2:
         move_command = can.Message(
             is_extended_id=False, arbitration_id=0x80
         )
-        print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
+        # print('GENERAL MOVE FROM SERVO', self.servo.servo_id)
         self.servo.send(message=move_command)
 
     def save_settings(self):

@@ -40,7 +40,7 @@ class ServoData():
             "6081": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.speed, is_new_value=0), # speed 
             "6064": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.pos, is_new_value=0), # pos
             "2614": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.saved, is_new_value=0), # save  
-            "interpolation": ServoCommandData(answer_code=0x480+self.servo_id, send_address=0x500+self.servo_id, value_link=self.target_pos, is_new_value=1), # interpol (target pos)
+            "interpolation": ServoCommandData(answer_code=0x480+self.servo_id, send_address=0x500+self.servo_id, value_link=self.target_pos, is_new_value=0), # interpol (target pos)
             "6083": ServoCommandData(answer_code=0x580+self.servo_id, send_address=0x600+self.servo_id, value_link=self.acceleration, is_new_value=0), # acceleration
                 }
 
