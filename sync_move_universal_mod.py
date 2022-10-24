@@ -60,7 +60,7 @@ class AxisData:
     
 def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_pos=0, servo_4_target_pos=0, servo_5_target_pos=0, servo_6_target_pos=0):
     default_speed = 100
-    default_acceleration = 290
+    default_acceleration = 20
 
     axis_1_max_value = 360
     axis_2_max_value = 100
@@ -94,6 +94,7 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
             print( 'axis ', axis_id, 'max value error')
             return
 
+    # set accel
     for axis_id in axis_data:
         axis_data[axis_id].servo_object_thread.set_acceleration(default_acceleration)
 
