@@ -29,8 +29,23 @@ class CommandsReader(
 
         num_of_bytes_to_read = data[0]
 
-        data = data[3:]
+        
+
+        if int(id / 10) == 48:
+
+            data = data[:3]
+            print('deta', data)
+            decoded_data = ''
+            decoded_data += data[2]
+            decoded_data += data[1]
+            decoded_data += data[0]
+
+            recieved_command.decoded_data = int(decoded_data, 16)
+
+            return recieved_command
+
         if num_of_bytes_to_read == "4f":
+            data = data[3:]
             decoded_data = ""
             decoded_data += data[1]
 
@@ -39,6 +54,7 @@ class CommandsReader(
             return recieved_command
 
         elif num_of_bytes_to_read == "4b":
+            data = data[3:]
             decoded_data = ""
             decoded_data += data[2]
             decoded_data += data[1]
@@ -48,6 +64,7 @@ class CommandsReader(
             return recieved_command
 
         elif num_of_bytes_to_read == "43":
+            data = data[3:]
             decoded_data = ""
             decoded_data += data[4]
             decoded_data += data[3]
@@ -67,7 +84,7 @@ class CommandsReader(
             return recieved_command
 
         else:
-
+            data = data[3:]
             return recieved_command
 
 

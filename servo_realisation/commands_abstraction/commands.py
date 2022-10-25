@@ -21,7 +21,7 @@ import servo_realisation.commands_abstraction.commads_storage
 # commands_info_storage = servo_realisation.commands_abstraction.commads_storage.general_commands_info_storage
 servo_info_storage = servo_realisation.commands_abstraction.commads_storage.servo_info_storage
 
-
+'''
 class ControlServo:
     def __init__(
         self, servo_object: servo_realisation.control_objects.servo_interface.ServoInterface
@@ -237,8 +237,7 @@ class ControlServo:
             decoded_recieve = self.command_reader.read_recieve(elem)
             res.append(decoded_recieve)
         return res
-
-
+'''
 
 class ControlServoThread:
     def __init__(
@@ -336,9 +335,10 @@ class ControlServoThread:
                 data_len=len(write_value),
                 data=write_value,
             )
-            command_data_in_servo_data.set_flag(0)
+            
 
-            while not command_data_in_servo_data.read_flag():
+            while not command_data_in_servo_data.read_flag() and command_data_in_servo_data.read_value() != value:
+                command_data_in_servo_data.set_flag(0)
                 self.servo.send(channel=0, messages=set_pos_command)
                 
             # print('send pos done', self.servo.servo_id)
@@ -496,6 +496,10 @@ class ControlServoThread:
         # print('wait accel  end')
         return self.current_servo_data.read_acceleration()
 
+    def print_servo_data(self):
+        return self.current_servo_data.print_servo_data()
+
+'''
 
 class ControlServoCan:
     def __init__(
@@ -1221,3 +1225,4 @@ class ControlServoCan_test_2:
         servo_info_storage[self.servo.servo_id].mode = decoded_recieve.decoded_data
 
         return decoded_recieve
+'''

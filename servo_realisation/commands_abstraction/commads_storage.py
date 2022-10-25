@@ -56,8 +56,8 @@ class ServoData():
     def read_acceleration(self):
         return self.commands_info_storage["6083"].read_value()
 
-    # def read_target_pos_value(self):
-    #     return self.commands_info_storage["interpolation"].read_value()
+    def read_target_pos(self):
+        return self.commands_info_storage["interpolation"].read_value()
 
     def set_speed_value(self, value):
         self.commands_info_storage["6081"].set_value(value=value)
@@ -68,8 +68,8 @@ class ServoData():
     def set_acceleration_value(self, value):
         self.commands_info_storage["6083"].set_value(value=value)
 
-    # def set_target_pos_value(self,  value):
-    #     self.commands_info_storage["interpolation"].set_value(value=value)
+    def set_target_pos_value(self,  value):
+        self.commands_info_storage["interpolation"].set_value(value=value)
     
     def set_speed_flag(self, value: bool):
         self.commands_info_storage["6081"].set_flag(value=value)
@@ -84,8 +84,8 @@ class ServoData():
     def set_acceleration_flag(self, value: bool):
         return self.commands_info_storage["6083"].set_value(value=value)
 
-    # def set_target_pos_flag(self,  value: bool):
-    #     self.commands_info_storage["interpolation"].set_flag(value=value)
+    def set_target_pos_flag(self,  value: bool):
+        self.commands_info_storage["interpolation"].set_flag(value=value)
     
     def read_speed_flag(self, ):
         return self.commands_info_storage["6081"].read_flag()
@@ -102,9 +102,12 @@ class ServoData():
     def read_acceleration_flag(self):
         return self.commands_info_storage["6083"].read_flag()
 
+    def print_servo_data(self):
+        print('SERVO ', self.servo_id)
+        print('Speed: ', self.read_speed(), 'Cur_pos: ', self.read_current_pos(), 'Targ_pos: ', self.read_target_pos(), 'Accel: ', self.read_acceleration())
 
-servo_info_storage: typing.Dict[int, ServoData] = {
-}
+
+servo_info_storage: typing.Dict[int, ServoData] = {}
 
 
 class GeneralCommandData():

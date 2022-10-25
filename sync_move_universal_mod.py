@@ -91,7 +91,7 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
     # max val check
     for axis_id in axis_data:
         if axis_data[axis_id].max_value < axis_data[axis_id].target_pos:
-            print( 'axis ', axis_id, 'max value error')
+            # print( 'axis ', axis_id, 'max value error')
             return
 
     # set accel
@@ -130,12 +130,16 @@ def move_to_pos_sync(servo_1_target_pos=0, servo_2_target_pos=0, servo_3_target_
         # else:
         axis_data[axis_id].servo_object_thread.set_speed(axis_data[axis_id].target_speed)
         
-        print('axis ', axis_id, axis_data[axis_id].servo_object_thread.read_speed(), axis_data[axis_id].distance_delta)
+        # print('axis ', axis_id, axis_data[axis_id].servo_object_thread.read_speed(), axis_data[axis_id].distance_delta)
    
     # set target pos
     for axis_id in axis_data:
         axis_data[axis_id].servo_object_thread.set_pos(axis_data[axis_id].target_pos)
     
+
+    for axis_id in axis_data:
+        axis_data[axis_id].servo_object_thread.print_servo_data()
+
     servo_1_thread_controller.general_move_command()
 
 

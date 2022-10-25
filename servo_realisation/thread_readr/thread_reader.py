@@ -22,9 +22,10 @@ def thread_reader(can_object: canalystii.CanalystDevice):
                 if one_recieved_command.servo_id in servo_info_storage:
                 
                     if int(one_recieved_command.id / 10) == 48:
+
                         servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].set_value(one_recieved_command.decoded_data)
                         servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].set_flag(1)
-                        print('THREAD READ INTERPOL', one_recieved_command.servo_id, servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].value_link, servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].read_flag())
+                        # print('THREAD READ INTERPOL', one_recieved_command.servo_id, servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].value_link, servo_info_storage[one_recieved_command.servo_id].commands_info_storage["interpolation"].read_flag())
 
                     
                     elif one_recieved_command.command_data in servo_info_storage[one_recieved_command.servo_id].commands_info_storage:
