@@ -8,6 +8,8 @@ class ServoMotor:
         self.acceleration = -1
         self.mode = -1
         self.error_code = -1
+        self.pulses_per_revolution = 32768
+        self.gearbox = 50
 
     def set_zero_pos(self):
         self.current_pos = 0

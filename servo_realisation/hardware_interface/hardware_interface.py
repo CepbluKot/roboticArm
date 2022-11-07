@@ -12,7 +12,7 @@ class HardwareInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
-    def send(self, message: canalystii.Message):
+    def send(self, message: canalystii.Message, command_id: int, servo_id: int):
         raise NotImplemented
 
     @abc.abstractmethod
