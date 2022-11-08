@@ -9,7 +9,7 @@ from servo_realisation.hardware_interface.hardware_interface import HardwareInte
 
 
 class ReceievedMessage:
-    def __init__(self, id: int, ts: str, data: str) -> None:
+    def __init__(self, id: str, ts: str, data: str) -> None:
         self.id = id
         self.ts = ts
         self.data = data
@@ -66,8 +66,8 @@ class CanOpen301(ProtocolInterface):
         self.modify_target_pos = on_modify_target_pos
 
     def parse_recieve(self, msg: canalystii.Message) -> ReceievedMessage:
-        id = msg.can_id
-        servo_id = id % 10
+        id = hex(msg.can_id)
+        servo_id = int(id[-1])
         ts = msg.timestamp
         data = msg.data
 
@@ -78,7 +78,7 @@ class CanOpen301(ProtocolInterface):
 
         num_of_bytes_to_read = hex(bytes(data)[0])
 
-        if id // 10 == 48:
+        if id[:1] == 48:
             recieved_command.decoded_data = int.from_bytes(
                 bytes(data), byteorder="little"
             )

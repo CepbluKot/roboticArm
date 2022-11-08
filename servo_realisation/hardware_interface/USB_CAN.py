@@ -72,11 +72,11 @@ class USB_CAN(HardwareInterface):
         # return False
 
     def __send_thread(self):
-        # time.sleep(0.01)
+        time.sleep(0.01)
         if self.sent_messages_buffer:
             print("looking ")
             for command_id in self.sent_messages_buffer:
-                for servo_id in self.sent_messages_buffer[command_id]:
+                for servo_id in self.sent_messages_buffer[command_id]:    
                     if self.sent_messages_buffer[command_id][servo_id].attempts:
                         self.__send_again(
                             message=self.sent_messages_buffer[command_id][
@@ -92,30 +92,28 @@ class USB_CAN(HardwareInterface):
             # print('---------------')
             if self.sent_messages_buffer:
                 for com_id in self.sent_messages_buffer:
-                    for ser_id in self.sent_messages_buffer[com_id]:
-                        pass
-                        # print('[', com_id,']', '[', ser_id, ']', self.sent_messages_buffer[com_id][ser_id].message, self.sent_messages_buffer[com_id][ser_id].attempts)
+                    print(self.sent_messages_buffer[com_id])
 
             # else:
             #     print('pass')
 
-    def __queue_send_msg_handler(
+    def __queue_send_msg(
         self, msg: canalystii.Message, command_id: int, servo_id: int
     ):
         if command_id not in self.sent_messages_buffer:
             self.sent_messages_buffer[command_id] = {}
         self.sent_messages_buffer[command_id][servo_id] = QueueMessage(msg)
-        print("createds")
+        self.sent_messages_buffer[command_id][servo_id].attempts += 1
+        
 
     def __queue_recieved_msg_handler(self, msg: ReceievedMessage):
         #
         # print(msg.command_data, self.sent_messages_buffer.keys())
         if msg.command_data in self.sent_messages_buffer:
-            print(self.sent_messages_buffer[msg.command_data].keys(), msg.servo_id) # smth wrong 
-            if msg.id in self.sent_messages_buffer[msg.command_data]:
+            if msg.servo_id in self.sent_messages_buffer[msg.command_data]:
                 
                 self.sent_messages_buffer[msg.command_data].pop(msg.servo_id, None)
-                print("removed")
+                
 
     def open_connection(self):
         try:
@@ -134,7 +132,7 @@ class USB_CAN(HardwareInterface):
 
     def send(self, message: canalystii.Message, command_id: int, servo_id: int):
         try:
-            self.__queue_send_msg_handler(
+            self.__queue_send_msg(
                 msg=message, command_id=command_id, servo_id=servo_id
             )
             return self.device.send(channel=self.bus_id, messages=message)
