@@ -74,7 +74,7 @@ class USB_CAN(HardwareInterface):
     def __send_thread(self):
         time.sleep(0.01)
         if self.sent_messages_buffer:
-            print("looking ")
+            # print("looking ")
             for command_id in self.sent_messages_buffer:
                 for servo_id in self.sent_messages_buffer[command_id]:    
                     if self.sent_messages_buffer[command_id][servo_id].attempts:
@@ -92,8 +92,8 @@ class USB_CAN(HardwareInterface):
             # print('---------------')
             if self.sent_messages_buffer:
                 for com_id in self.sent_messages_buffer:
-                    print(self.sent_messages_buffer[com_id])
-
+                    # print(self.sent_messages_buffer[com_id])
+                    pass
             # else:
             #     print('pass')
 

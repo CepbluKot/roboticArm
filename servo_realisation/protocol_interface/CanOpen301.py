@@ -73,15 +73,18 @@ class CanOpen301(ProtocolInterface):
 
         recieved_command = ReceievedMessage(id=id, ts=ts, data=data)
 
-        recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
+
+        recieved_command.command_data = hex(data[2])[2:] + hex(data[1])[2:]
         recieved_command.servo_id = servo_id
 
         num_of_bytes_to_read = hex(bytes(data)[0])
 
-        if id[:1] == 48:
+        if id[2:4] == '48':
             recieved_command.decoded_data = int.from_bytes(
-                bytes(data), byteorder="little"
+                bytes(data)[:-4], byteorder="little"
             )
+
+            recieved_command.command_data = 'interpolation'
 
         elif num_of_bytes_to_read == "0x60":
             recieved_command.decoded_data = "success"
@@ -128,17 +131,17 @@ class CanOpen301(ProtocolInterface):
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first_dec = command_code_from_documentation // 1000000
+        command_byte_first_hex = command_code_from_documentation // 1000000
         command_byte_first = (
-            command_byte_first_dec % 10 * 1 + command_byte_first_dec // 10 * 16
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
         )
 
-        command_byte_second_dec = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second_dec % 10 * 1 + command_byte_second_dec // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         value = round(value)
@@ -154,7 +157,8 @@ class CanOpen301(ProtocolInterface):
             data=list_of_bytes,
             can_id=address + servo_id,
         )
-        command_id = int(str(command_byte_first_dec) + str(command_byte_second_dec))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        print('cumnd', output_command)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -167,15 +171,17 @@ class CanOpen301(ProtocolInterface):
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first = command_code_from_documentation // 1000000
-        command_byte_first = command_byte_first % 10 * 1 + command_byte_first // 10 * 16
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
 
-        command_byte_second = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second % 10 * 1 + command_byte_second // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         value = round(value)
@@ -192,7 +198,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first) + str(command_byte_second))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -205,15 +211,17 @@ class CanOpen301(ProtocolInterface):
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first = command_code_from_documentation // 1000000
-        command_byte_first = command_byte_first % 10 * 1 + command_byte_first // 10 * 16
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
 
-        command_byte_second = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second % 10 * 1 + command_byte_second // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         value = round(value)
@@ -230,7 +238,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first) + str(command_byte_second))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -243,15 +251,17 @@ class CanOpen301(ProtocolInterface):
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first = command_code_from_documentation // 1000000
-        command_byte_first = command_byte_first % 10 * 1 + command_byte_first // 10 * 16
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
 
-        command_byte_second = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second % 10 * 1 + command_byte_second // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         value = round(value)
@@ -268,7 +278,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first) + str(command_byte_second))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -293,45 +303,63 @@ class CanOpen301(ProtocolInterface):
         self.device.send(message=command)
 
     def send_target_pos(self, servo_id: int, value: int) -> canalystii.Message:
-        num_of_bytes_for_command = 4
 
+        num_of_bytes_for_command = 4
+        result = []
         value = round(value)
-        value = int.to_bytes(value, length=num_of_bytes_for_command, byteorder="little")
+
+        value = hex(value)[2:]
+        
+        num_of_iterations = 0
+        while value:
+            result.append("0x" + value[-2:])
+            value = value[:-2]
+            num_of_iterations += 1
+
+        while num_of_bytes_for_command != num_of_iterations:
+            result.append("0x00")
+            num_of_iterations += 1
+        
+        convert_to_dec = ()
+        for element in result:
+            convert_to_dec += (int(element, 0),)
+
+        
 
         command = canalystii.Message(
             remote=False,
             extended=False,
-            data_len=len(value),
-            data=value,
+            data_len=4,
+            data=convert_to_dec,
             can_id=self.__RPDO4_object + servo_id,
         )
-
-        self.device.send(message=command)
+        self.device.send(message=command, command_id='interpolation', servo_id=servo_id)
 
     def send_general_move_command(self) -> canalystii.Message:
         command = canalystii.Message(
             remote=False, extended=False, data_len=0, can_id=0x80
         )
-        self.device.send(message=command)
+        self.device.send(message=command,servo_id=1, command_id=0)
 
     def read_speed(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__speed_command_full
         address = self.__SDO_object
+
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first_dec = command_code_from_documentation // 1000000
+        command_byte_first_hex = command_code_from_documentation // 1000000
         command_byte_first = (
-            command_byte_first_dec % 10 * 1 + command_byte_first_dec // 10 * 16
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
         )
 
-        command_byte_second_dec = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second_dec % 10 * 1 + command_byte_second_dec // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         bytes_code = self.__get_bytes_code(
@@ -348,7 +376,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_dec) + str(command_byte_second_dec))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -357,19 +385,22 @@ class CanOpen301(ProtocolInterface):
         command_code_from_documentation = self.__accel_command_full
 
         address = self.__SDO_object
+        
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first = command_code_from_documentation // 1000000
-        command_byte_first = command_byte_first % 10 * 1 + command_byte_first // 10 * 16
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
 
-        command_byte_second = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second % 10 * 1 + command_byte_second // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         bytes_code = self.__get_bytes_code(
@@ -386,7 +417,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first) + str(command_byte_second))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -395,19 +426,22 @@ class CanOpen301(ProtocolInterface):
         command_code_from_documentation = self.__mode_command_full
 
         address = self.__SDO_object
+
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
             + ((command_code_from_documentation % 100) % 10 * 1)
         ) // 8
-        command_byte_first = command_code_from_documentation // 1000000
-        command_byte_first = command_byte_first % 10 * 1 + command_byte_first // 10 * 16
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
 
-        command_byte_second = (
+        command_byte_second_hex = (
             command_code_from_documentation // 10000 * 10000
             - command_code_from_documentation // 1000000 * 1000000
         ) // 10000
         command_byte_second = (
-            command_byte_second % 10 * 1 + command_byte_second // 10 * 16
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
         )
 
         bytes_code = self.__get_bytes_code(
@@ -424,7 +458,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first) + str(command_byte_second))
+        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
