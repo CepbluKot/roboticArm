@@ -16,7 +16,7 @@ class ReceievedMessage:
         self.servo_id = int()
         self.decoded_data = int()
         self.command_data = int()
-
+        self.is_read = bool()
 
 # modify_speed(servo_id, value)
 
@@ -28,6 +28,7 @@ class CanOpen301(ProtocolInterface):
     __save_command_full = 26140010
     __pos_command_full = 60640020
     __save_command_full = 26140010
+    __interpolation = 'interpolation'
 
     __RPDO4_object = 0x500
     __SDO_object = 0x600
@@ -86,19 +87,24 @@ class CanOpen301(ProtocolInterface):
             recieved_command.decoded_data = int.from_bytes(
                 bytes(data)[:-4], byteorder="little"
             )
-
-            recieved_command.command_data = "interpolation"
+            recieved_command.command_data = self.__interpolation
+            is_read = False
 
         elif num_of_bytes_to_read == "0x60":
             recieved_command.decoded_data = "success"
+            is_read = False
 
         elif num_of_bytes_to_read == "0x80":
             recieved_command.decoded_data = "fail"
+            is_read = False
 
         else:
             recieved_command.decoded_data = int.from_bytes(
                 bytes(data)[4:], byteorder="little"
             )
+            is_read = True
+
+        recieved_command.is_read = is_read
 
         return recieved_command
 
@@ -130,10 +136,14 @@ class CanOpen301(ProtocolInterface):
         value = tuple(value)
         return value
 
+    def check_is_buffer_empty(self):
+        return self.device.check_is_device_buffer_empty()
+
     def send_speed(self, servo_id: int, value: int) -> canalystii.Message:
         # value -  в 16 формат с инверсией байт
         command_code_from_documentation = self.__speed_command_full
         address = self.__SDO_object
+        is_read = False
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -176,12 +186,13 @@ class CanOpen301(ProtocolInterface):
         print("send speed --> ", output_command, list_of_bytes)
 
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def send_mode(self, servo_id: int, value: int) -> canalystii.Message:
         command_code_from_documentation = self.__mode_command_full
         address = self.__SDO_object
+        is_read = False
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -222,12 +233,13 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def send_acceleration(self, servo_id: int, value: int) -> canalystii.Message:
         command_code_from_documentation = self.__accel_command_full
         address = self.__SDO_object
+        is_read = False
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -269,12 +281,13 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def send_save(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__save_command_full
         address = self.__SDO_object
+        is_read = False
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -313,10 +326,11 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def send_zero_pos_set(self, servo_id: int) -> typing.List[canalystii.Message]:
+
         set_zero_part_1 = canalystii.Message(
             can_id=0x600 + servo_id,
             remote=False,
@@ -333,10 +347,12 @@ class CanOpen301(ProtocolInterface):
             data=(0x2B, 0x0A, 0x26, 0x00, 0x70, 0xEA),
         )
         command = [set_zero_part_1, set_zero_part_2]
-        self.device.send(message=command)
+        self.device.send_without_buffer(message=command)
 
     def send_target_pos(self, servo_id: int, value: int) -> canalystii.Message:
+        # check
         num_of_bytes_for_command = 4
+        is_read = False
 
         value = round(value)
 
@@ -355,18 +371,20 @@ class CanOpen301(ProtocolInterface):
         print("send target_pos --> ", output_command)
 
         self.device.send(
-            message=output_command, command_id="interpolation", servo_id=servo_id
+            message=output_command, command_id=self.__interpolation, servo_id=servo_id, is_read=is_read
         )
 
     def send_general_move_command(self) -> canalystii.Message:
         command = canalystii.Message(
             remote=False, extended=False, data_len=0, can_id=0x80
         )
-        self.device.send(message=command, servo_id=1, command_id=0)
+
+        self.device.send_without_buffer(message=command)
 
     def read_speed(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__speed_command_full
         address = self.__SDO_object
+        is_read = True
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -401,13 +419,13 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def read_accelearation(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__accel_command_full
-
         address = self.__SDO_object
+        is_read = True
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -442,13 +460,14 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def read_mode(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__mode_command_full
-
         address = self.__SDO_object
+
+        is_read = True
 
         num_of_bytes_for_command = (
             ((command_code_from_documentation % 100) // 10 * 16)
@@ -483,7 +502,7 @@ class CanOpen301(ProtocolInterface):
 
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
         self.device.send(
-            message=output_command, command_id=command_id, servo_id=servo_id
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
     def read_error_checker(self, servo_id: int) -> canalystii.Message:

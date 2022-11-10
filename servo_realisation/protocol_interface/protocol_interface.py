@@ -47,5 +47,9 @@ class ProtocolInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
+    def check_is_buffer_empty(self) -> bool:
+        raise NotImplemented
+
+    @abc.abstractmethod
     def get_command_id(self, msg: canalystii.Message):
         raise NotImplemented

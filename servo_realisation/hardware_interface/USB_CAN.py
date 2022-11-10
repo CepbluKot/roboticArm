@@ -16,31 +16,41 @@ class QueueMessage:
 
 class MessagesBuffer:
     def __init__(self, lock: threading.Lock) -> None:
-        self.messages_buffer: typing.Dict[int, typing.Dict[int, QueueMessage]] = {}
+        self.messages_buffer: typing.Dict[int, typing.Dict[int, typing.Dict[bool, QueueMessage]]] = {}
+
+        # command_id -> servo_id -> bool is read
+
         self.lock = lock
 
     def get(self):
         with self.lock:
             return copy.deepcopy(self.messages_buffer)
 
-    def set(self, command_id, servo_id, msg: QueueMessage):
+    def set(self, command_id, servo_id, is_read: bool, msg: QueueMessage):
         with self.lock:
             if not command_id in self.messages_buffer:
                 self.messages_buffer[command_id] = {}
-            self.messages_buffer[command_id][servo_id] = msg
 
-    def update(self, command_id, servo_id, new_msg: QueueMessage):
+            if not servo_id in self.messages_buffer[command_id]:
+                self.messages_buffer[command_id][servo_id] = {}
+
+            self.messages_buffer[command_id][servo_id][is_read] = msg
+
+    def update(self, command_id, servo_id, is_read: bool, new_msg: QueueMessage):
         with self.lock:
             if command_id in self.messages_buffer:
                 if servo_id in self.messages_buffer[command_id]:
-                    self.messages_buffer[command_id][servo_id] = new_msg
+                    if is_read in self.messages_buffer[command_id][servo_id]:
+                        self.messages_buffer[command_id][servo_id][is_read] = new_msg
 
-    def delete(self, command_id, servo_id):
+    def delete(self, command_id, servo_id, is_read: bool):
         with self.lock:
             if command_id in self.messages_buffer:
-                msg = self.messages_buffer[command_id][servo_id]
-                print('deleting', msg.attempts, msg.last_send_time)
-                self.messages_buffer[command_id].pop(servo_id, None)
+                if servo_id in self.messages_buffer[command_id]:
+                    if is_read in self.messages_buffer[command_id][servo_id]:
+                        msg = self.messages_buffer[command_id][servo_id][is_read]
+                        print('deleting', msg.attempts, msg.last_send_time, msg,is_read)
+                        self.messages_buffer[command_id][servo_id].pop(is_read, None)
 
     def check_is_empty(self):
         is_empty = True
@@ -48,7 +58,9 @@ class MessagesBuffer:
             if self.messages_buffer:
                 for command_id in self.messages_buffer:
                     if self.messages_buffer[command_id]:
-                        is_empty = False
+                        for is_read in self.messages_buffer[command_id]:
+                            if self.messages_buffer[command_id][is_read]:
+                                is_empty = False
         
         return is_empty
         
@@ -122,20 +134,21 @@ class USB_CAN(HardwareInterface):
 
             for command_id in sent_messages_buffer_copy:
                 for servo_id in sent_messages_buffer_copy[command_id]:
-                    if (
-                        time.time()
-                        - sent_messages_buffer_copy[command_id][servo_id].last_send_time
-                        > 1
-                    ):
-                        msg = sent_messages_buffer_copy[command_id][servo_id]
-                        msg.attempts += 1
-                        msg.last_send_time = time.time()
-                        self.__send_again(message=msg.message)
-                        print("send again", msg.attempts, msg.last_send_time, time.time())
-                        self.sent_messages_buffer.update(
-                            command_id=command_id, servo_id=servo_id, new_msg=msg
-                        )
-                        # print("sent again --> ", self.sent_messages_buffer[command_id][servo_id].message)
+                    for is_read in sent_messages_buffer_copy[command_id][servo_id]:
+                        if (
+                            time.time()
+                            - sent_messages_buffer_copy[command_id][servo_id][is_read].last_send_time
+                            > 1
+                        ):
+                            msg = sent_messages_buffer_copy[command_id][servo_id][is_read]
+                            msg.attempts += 1
+                            msg.last_send_time = time.time()
+                            self.__send_again(message=msg.message)
+                            print("send again", msg.attempts, msg.last_send_time, time.time(), is_read)
+                            self.sent_messages_buffer.update(
+                                command_id=command_id, servo_id=servo_id, new_msg=msg, is_read=is_read
+                            )
+                            # print("sent again --> ", self.sent_messages_buffer[command_id][servo_id].message)
 
     def __debug_thr(self):
         while True:
@@ -144,18 +157,19 @@ class USB_CAN(HardwareInterface):
 
             buffa = self.sent_messages_buffer.get()
             for code in buffa:
-                print(buffa[code])
-                print(self.sent_messages_buffer.check_is_empty())
+                for com_id in buffa[code]:
+                    print(buffa[code][com_id])
+                    print(self.sent_messages_buffer.check_is_empty())
 
             pass
 
-    def __queue_send_msg(self, msg: canalystii.Message, command_id: int, servo_id: int):
+    def __queue_send_msg(self, msg: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         msg = QueueMessage(message=msg, last_send_time=time.time())
-        self.sent_messages_buffer.set(command_id=command_id, servo_id=servo_id, msg=msg)
+        self.sent_messages_buffer.set(command_id=command_id, servo_id=servo_id, msg=msg, is_read=is_read)
 
     def __queue_recieved_msg_handler(self, msg: ReceievedMessage):
         self.sent_messages_buffer.delete(
-            command_id=msg.command_data, servo_id=msg.servo_id
+            command_id=msg.command_data, servo_id=msg.servo_id, is_read=msg.is_read
         )
         
 
@@ -174,14 +188,17 @@ class USB_CAN(HardwareInterface):
     def connection_is_opened(self):
         return self.device.get_can_status()
 
-    def send(self, message: canalystii.Message, command_id: int, servo_id: int):
+    def send(self, message: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         try:
-            self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id)
-            # return self.device.send(channel=self.bus_id, messages=message)
-            pass
+            self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id, is_read=is_read)
+            return self.device.send(channel=self.bus_id, messages=message)
+            # pass
         except:
             print("send - error")
             return False
+
+    def send_without_buffer(self, message: canalystii.Message):
+        return self.device.send(channel=self.bus_id, messages=message)
 
     def __send_again(self, message: canalystii.Message):
         self.device.send(channel=self.bus_id, messages=message)
@@ -192,6 +209,9 @@ class USB_CAN(HardwareInterface):
         except:
             print("receive - error")
             return False
+
+    def check_is_device_buffer_empty(self):
+        return self.sent_messages_buffer.check_is_empty()
 
     def close_connection(self):
         try:
