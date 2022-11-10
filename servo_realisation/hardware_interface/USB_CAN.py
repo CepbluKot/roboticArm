@@ -49,7 +49,7 @@ class MessagesBuffer:
                 if servo_id in self.messages_buffer[command_id]:
                     if is_read in self.messages_buffer[command_id][servo_id]:
                         msg = self.messages_buffer[command_id][servo_id][is_read]
-                        print('deleting', msg.attempts, msg.last_send_time, msg,is_read)
+                        # print('deleting', msg.attempts, msg.last_send_time, msg,is_read)
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
 
     def check_is_empty(self):
@@ -101,12 +101,12 @@ class USB_CAN(HardwareInterface):
             except:
                 print("start send thread - error")
 
-        self.debug_thread = threading.Thread(target=self.__debug_thr)
-        if not self.debug_thread.is_alive():
-            try:
-                self.debug_thread.start()
-            except:
-                print("start debug thread - error")
+        # self.debug_thread = threading.Thread(target=self.__debug_thr)
+        # if not self.debug_thread.is_alive():
+        #     try:
+        #         self.debug_thread.start()
+        #     except:
+        #         print("start debug thread - error")
 
     def __read_thread(self):
         while self.read_thread.is_alive():
@@ -116,7 +116,7 @@ class USB_CAN(HardwareInterface):
             if recv:
                 for message in recv:
 
-                    print("recieved --> ", message)
+                    # print("recieved --> ", message)
                     parsed = self.on_recieve(message)
                     self.__queue_recieved_msg_handler(parsed)
 
@@ -144,24 +144,24 @@ class USB_CAN(HardwareInterface):
                             msg.attempts += 1
                             msg.last_send_time = time.time()
                             self.__send_again(message=msg.message)
-                            print("send again", msg.attempts, msg.last_send_time, time.time(), is_read)
+                            # print("send again", msg.attempts, msg.last_send_time, time.time(), is_read)
                             self.sent_messages_buffer.update(
                                 command_id=command_id, servo_id=servo_id, new_msg=msg, is_read=is_read
                             )
                             # print("sent again --> ", self.sent_messages_buffer[command_id][servo_id].message)
 
-    def __debug_thr(self):
-        while True:
-            time.sleep(0.2)
-            print('---------------')
+    # def __debug_thr(self):
+    #     while True:
+    #         # time.sleep(0.2)
+    #         # print('---------------')
 
-            buffa = self.sent_messages_buffer.get()
-            for code in buffa:
-                for com_id in buffa[code]:
-                    print(buffa[code][com_id])
-                    print(self.sent_messages_buffer.check_is_empty())
-
-            pass
+    #         # buffa = self.sent_messages_buffer.get()
+    #         # for code in buffa:
+    #         #     for com_id in buffa[code]:
+    #         #         print(buffa[code][com_id])
+        
+            
+    #         pass
 
     def __queue_send_msg(self, msg: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         msg = QueueMessage(message=msg, last_send_time=time.time())

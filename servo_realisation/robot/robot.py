@@ -1,11 +1,11 @@
 import typing
-import servo_realisation.robot
+
 from servo_realisation.protocol_interface.protocol_interface import ProtocolInterface
-import servo_motor
+from servo_realisation.robot.servo_motor import ServoMotor
 
 
 class Robot:
-    servos: typing.Dict[int, servo_motor.ServoMotor] = {}
+    servos: typing.Dict[int, ServoMotor] = {}
 
     def __init__(
         self,
@@ -16,13 +16,19 @@ class Robot:
         self.DoF = DoF
         self.protocol_interface = protocol_interface
 
+
+        if len(assigned_servos_ids) != DoF:
+            raise Exception('ERROR len(assigned_servos_ids) != DoF')
+            
+
         if assigned_servos_ids:
             for servo_id in assigned_servos_ids:
-                self.servos[servo_id] = servo_motor(servo_id)
+                self.servos[servo_id] = ServoMotor(servo_id)
 
         else:
             for servo_id in range(1, DoF + 1):
-                self.servos[servo_id] = servo_motor(servo_id)
+                self.servos[servo_id] = ServoMotor(servo_id)
+
 
     def __modify_acceleration(self, servo_id: int, value: int):
         self.servos[servo_id].set_acceleration(value)
@@ -62,10 +68,11 @@ class Robot:
     def set_target_pos(self, positions: typing.List[int]):
         for servo_id in self.servos:
             if self.servos[servo_id].read_target_pos() != positions[servo_id]:
-                self.protocol_interface.send_target_pos(
-                    servo_id=servo_id, value=positions[servo_id]
-                )
-                self.__modify_target_pos(servo_id=servo_id, value=positions[servo_id])
-
+                if positions[servo_id] != -1:
+                    self.protocol_interface.send_target_pos(
+                        servo_id=servo_id, value=positions[servo_id]
+                    )
+                    self.__modify_target_pos(servo_id=servo_id, value=positions[servo_id])
+                    print('movin', servo_id)
     def move(self):
         self.protocol_interface.send_general_move_command()

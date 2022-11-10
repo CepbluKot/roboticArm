@@ -78,7 +78,7 @@ class CanOpen301(ProtocolInterface):
 
         recieved_command = ReceievedMessage(id=id, ts=ts, data=data)
 
-        recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
+        
         recieved_command.servo_id = servo_id
 
         num_of_bytes_to_read = hex(bytes(data)[0])
@@ -93,16 +93,19 @@ class CanOpen301(ProtocolInterface):
         elif num_of_bytes_to_read == "0x60":
             recieved_command.decoded_data = "success"
             is_read = False
+            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
 
         elif num_of_bytes_to_read == "0x80":
             recieved_command.decoded_data = "fail"
             is_read = False
+            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
 
         else:
             recieved_command.decoded_data = int.from_bytes(
                 bytes(data)[4:], byteorder="little"
             )
             is_read = True
+            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
 
         recieved_command.is_read = is_read
 
