@@ -66,7 +66,7 @@ class CanOpen301(ProtocolInterface):
         self.modify_target_pos = on_modify_target_pos
 
     def __init_list_of_bytes(self, lenth):
-        list_of_bytes = ((0, ) * lenth)
+        list_of_bytes = (0,) * lenth
         return list_of_bytes
 
     def parse_recieve(self, msg: canalystii.Message) -> ReceievedMessage:
@@ -125,8 +125,8 @@ class CanOpen301(ProtocolInterface):
             else:
                 print("error - bytes_code_func - reached max num of bytes to send")
 
-    def __convert_to_bytes(self, value: int, num_of_bytes: int=4) -> typing.Tuple:
-        value = int.to_bytes(value, length=num_of_bytes, byteorder='little')
+    def __convert_to_bytes(self, value: int, num_of_bytes: int = 4) -> typing.Tuple:
+        value = int.to_bytes(value, length=num_of_bytes, byteorder="little")
         value = tuple(value)
         return value
 
@@ -155,10 +155,12 @@ class CanOpen301(ProtocolInterface):
         value = round(value)
 
         bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
-        value = self.__convert_to_bytes(value=value, num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
 
-        print('sped value = ', value)
-        
+        print("sped value = ", value)
+
         list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
         list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
 
@@ -172,7 +174,7 @@ class CanOpen301(ProtocolInterface):
         command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
 
         print("send speed --> ", output_command, list_of_bytes)
-        
+
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id
         )
@@ -201,7 +203,9 @@ class CanOpen301(ProtocolInterface):
         value = round(value)
 
         bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
-        value = self.__convert_to_bytes(value=value, num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
 
         list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
         list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
@@ -246,7 +250,9 @@ class CanOpen301(ProtocolInterface):
 
         bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
 
-        value = self.__convert_to_bytes(value=value, num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
 
         list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
         list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
@@ -290,7 +296,9 @@ class CanOpen301(ProtocolInterface):
         value = round(value)
 
         bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
-        value = self.__convert_to_bytes(value=value, num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
 
         list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
         list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
@@ -332,7 +340,9 @@ class CanOpen301(ProtocolInterface):
 
         value = round(value)
 
-        value = self.__convert_to_bytes(value=value, num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
 
         output_command = canalystii.Message(
             remote=False,
@@ -344,7 +354,9 @@ class CanOpen301(ProtocolInterface):
 
         print("send target_pos --> ", output_command)
 
-        self.device.send(message=output_command, command_id="interpolation", servo_id=servo_id)
+        self.device.send(
+            message=output_command, command_id="interpolation", servo_id=servo_id
+        )
 
     def send_general_move_command(self) -> canalystii.Message:
         command = canalystii.Message(

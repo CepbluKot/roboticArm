@@ -20,7 +20,6 @@ protoc = CanOpen301.CanOpen301(interfec, smth, smth, smth, smth, smth)
 # interfec.open_connection()
 
 
-
 # protoc.read_speed(6)
 # protoc.send_acceleration(6, 12)
 # protoc.read_accelearation(6)
@@ -39,10 +38,10 @@ protoc = CanOpen301.CanOpen301(interfec, smth, smth, smth, smth, smth)
 # protoc.send_target_pos(1, 0)
 # protoc.send_general_move_command()
 while 1:
-    print('send')
+    print("BEGIN SEND")
     protoc.read_speed(6)
-    
-    time.sleep(2)
+
+    time.sleep(5)
 # protoc.send_speed(6, 11)
 # protoc.read_speed(6)
 
