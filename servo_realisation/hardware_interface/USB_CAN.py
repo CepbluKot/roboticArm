@@ -17,9 +17,6 @@ class QueueMessage:
 class MessagesBuffer:
     def __init__(self, lock: threading.Lock) -> None:
         self.messages_buffer: typing.Dict[int, typing.Dict[int, typing.Dict[bool, QueueMessage]]] = {}
-
-        # command_id -> servo_id -> bool is read
-
         self.lock = lock
 
     def get(self):
@@ -116,7 +113,7 @@ class USB_CAN(HardwareInterface):
             if recv:
                 for message in recv:
 
-                    # print("recieved --> ", message)
+                    print("recieved --> ", message)
                     parsed = self.on_recieve(message)
                     self.__queue_recieved_msg_handler(parsed)
 

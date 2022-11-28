@@ -32,7 +32,7 @@ class ServoMotor:
     def read_speed(self):
         return self.speed
 
-    def read_acceleartion(self):
+    def read_acceleration(self):
         return self.acceleration
 
     def read_pos(self):

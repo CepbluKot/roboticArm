@@ -45,6 +45,18 @@ class Robot:
     def __modify_target_pos(self, servo_id: int, value: int):
         self.servos[servo_id].set_target_pos(value)
 
+    def __read_acceleration(self, servo_id: int):
+        return self.servos[servo_id].read_acceleration()
+
+    def __read_mode(self, servo_id: int):
+        return self.servos[servo_id].read_mode()
+
+    def __read_speed(self, servo_id: int):
+        return self.servos[servo_id].read_speed()
+
+    def __read_target_pos(self, servo_id: int):
+        return self.servos[servo_id].read_target_pos()
+
     def set_mode(self, value: int):
         for servo_id in self.servos:
             if self.servos[servo_id].read_mode() != value:
@@ -56,10 +68,10 @@ class Robot:
             if self.servos[servo_id].read_speed() != value:
                 self.protocol_interface.send_speed(servo_id=servo_id, value=value)
                 self.__modify_speed(servo_id=servo_id, value=value)
-
+                
     def set_acceleration(self, value: int):
         for servo_id in self.servos:
-            if self.servos[servo_id].read_acceleartion() != value:
+            if self.servos[servo_id].read_acceleration() != value:
                 self.protocol_interface.send_acceleration(
                     servo_id=servo_id, value=value
                 )
@@ -73,6 +85,24 @@ class Robot:
                         servo_id=servo_id, value=positions[servo_id]
                     )
                     self.__modify_target_pos(servo_id=servo_id, value=positions[servo_id])
-                    print('movin', servo_id)
+
+    def set_zero_pos(self, servo_id: int):
+        self.protocol_interface.send_zero_pos_set(servo_id)
+        
+    def save_settings(self, servo_id: int):
+        self.protocol_interface.send_save(servo_id)
+
     def move(self):
         self.protocol_interface.send_general_move_command()
+
+    def read_mode(self, servo_id: int):
+        return self.__read_mode(servo_id=servo_id)
+
+    def read_speed(self, servo_id: int):
+        return self.__read_speed(servo_id=servo_id)
+
+    def read_acceleration(self, servo_id: int):
+        return self.__read_acceleration(servo_id=servo_id)
+
+    def read_target_pos(self, servo_id: int):
+        return self.__read_target_pos(servo_id=servo_id)
