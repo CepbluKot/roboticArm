@@ -49,6 +49,7 @@ class MessagesBuffer:
                         # print('deleting', msg.attempts, msg.last_send_time, msg,is_read)
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
 
+                        print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
     def check_is_empty(self):
         is_empty = True
         with self.lock:
@@ -187,6 +188,7 @@ class USB_CAN(HardwareInterface):
 
     def send(self, message: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         try:
+            print('added to buffer:', 'servo_id', servo_id,  'command_id', command_id, )
             self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id, is_read=is_read)
             return self.device.send(channel=self.bus_id, messages=message)
             # pass

@@ -87,12 +87,12 @@ class CanOpen301(ProtocolInterface):
         elif num_of_bytes_to_read == "0x60":
             recieved_command.decoded_data = "success"
             is_read = False
-            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
+            recieved_command.command_data = data[2] * 100 + data[1]
 
         elif num_of_bytes_to_read == "0x80":
             recieved_command.decoded_data = "fail"
             is_read = False
-            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
+            recieved_command.command_data = data[2] * 100 + data[1]
 
         else:
             recieved_command.decoded_data = int.from_bytes(
@@ -100,9 +100,8 @@ class CanOpen301(ProtocolInterface):
             )
             is_read = True
             
-
-            recieved_command.command_data = int(hex(data[2])[2:] + hex(data[1])[2:])
-
+            recieved_command.command_data = data[2] * 100 + data[1]
+          
         recieved_command.is_read = is_read
 
         return recieved_command
@@ -180,7 +179,7 @@ class CanOpen301(ProtocolInterface):
             data=list_of_bytes,
             can_id=address + servo_id,
         )
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = int(command_byte_first) * 100 + int(command_byte_second)
 
         # print("send speed --> ", output_command, list_of_bytes)
 
@@ -230,7 +229,7 @@ class CanOpen301(ProtocolInterface):
 
         # print("send mode --> ", output_command)
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -278,7 +277,7 @@ class CanOpen301(ProtocolInterface):
 
         # print("send accel --> ", output_command)
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -323,7 +322,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -405,7 +404,7 @@ class CanOpen301(ProtocolInterface):
         bytes_code = self.__get_bytes_code(
             num_of_bytes=num_of_bytes_for_command, is_read=1
         )
-
+        print('command_byte_second',command_byte_second, 'command_byte_second_hex',command_byte_second_hex, 'command_byte_first',command_byte_first, 'command_byte_first_hex',command_byte_first_hex)
         final_command = (bytes_code, command_byte_second, command_byte_first, 0)
 
         output_command = canalystii.Message(
@@ -416,7 +415,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -457,7 +456,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -499,7 +498,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex))
+        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -524,9 +523,6 @@ class CanOpen301(ProtocolInterface):
         )
 
         final_command = (bytes_code, command_byte_second, command_byte_first, 0)
-        print('final_command',final_command,)
-
-        final_command = (0x40, 0x0e, 0x26, 0)
 
         output_command = canalystii.Message(
             remote=False,
@@ -536,9 +532,11 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(str(command_byte_first_hex) + str(command_byte_second_hex), 16)
-        # self.device.send(
-        #     message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
-        # )
+        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        
+        print('command_id',command_id, final_command)
 
-        self.device.send_without_buffer(message=output_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )

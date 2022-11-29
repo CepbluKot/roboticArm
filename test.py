@@ -41,7 +41,7 @@ robt.set_acceleration(20)
 
 time.sleep(2)
 
-protoc.read_error_checker(1)
+# protoc.read_error_checker(1)
 
 # protoc.read_error_checker(4)
 
