@@ -1,3 +1,6 @@
+from tkinter import *
+
+
 class GeneralParamsRepo:
     def __init__(self) -> None:
         self.repo = {} # servo_id: { val name: widget}
@@ -11,8 +14,9 @@ class GeneralParamsRepo:
     def getall(self):
         return self.repo
 
-    def get(self, servo_id: int, value_name):
+    def get(self, servo_id: int, value_name) -> Label:
         if servo_id in self.repo:
+            print('waat', self.repo[servo_id][value_name])
             return self.repo[servo_id][value_name]
         else:
             return 0

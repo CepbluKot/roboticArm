@@ -46,23 +46,24 @@ class MessagesBuffer:
                 if servo_id in self.messages_buffer[command_id]:
                     if is_read in self.messages_buffer[command_id][servo_id]:
                         msg = self.messages_buffer[command_id][servo_id][is_read]
-                        # print('deleting', msg.attempts, msg.last_send_time, msg,is_read)
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
-
                         print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
+    
     def check_is_empty(self):
-        is_empty = True
         with self.lock:
+            is_empty = True
+            
             if self.messages_buffer:
                 for command_id in self.messages_buffer:
                     if self.messages_buffer[command_id]:
-                        for is_read in self.messages_buffer[command_id]:
-                            if self.messages_buffer[command_id][is_read]:
+                        for servo_id in self.messages_buffer[command_id]:
+                            if self.messages_buffer[command_id][servo_id]:
+                                # print('wtf', self.messages_buffer[command_id][servo_id][is_read].message.can_id)
                                 is_empty = False
-        
-        return is_empty
-        
+            
+            return is_empty
 
+            
 class USB_CAN(HardwareInterface):
     def __init__(
         self,

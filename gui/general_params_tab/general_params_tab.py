@@ -1,3 +1,4 @@
+import pydantic
 from tkinter import *
 from gui.general_params_tab.storages.output import general_params_repo
 
@@ -12,12 +13,23 @@ def general_params_tab(frame):
             value_field.grid(row=row, column=column+1, padx=5, pady=5)
             general_params_repo.set(axis_id=axis_id, widget=value_field, value_name=param_name)
             
+
     def axis_params(axis_name: str,  frame, axis_id: int):
         param_field(param_name=axis_name, row=axis_id, column=0, frame=frame, axis_id=axis_id)
-        param_field(param_name='error code', row=axis_id, column=2, frame=frame, axis_id=axis_id, param_value=-1)
-        param_field(param_name='voltage', row=axis_id, column=4, frame=frame, axis_id=axis_id, param_value=-1)
-        param_field(param_name='temperature', row=axis_id, column=6, frame=frame, axis_id=axis_id, param_value=-1)
-    
+        param_field(param_name='speed', row=axis_id, column=2, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='accel', row=axis_id, column=4, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='mode', row=axis_id, column=6, frame=frame, axis_id=axis_id, param_value=-1)
+        
+        param_field(param_name='positon', row=axis_id, column=8, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='target position', row=axis_id, column=10, frame=frame, axis_id=axis_id, param_value=-1)
+
+        param_field(param_name='error code', row=axis_id, column=12, frame=frame, axis_id=axis_id, param_value=-1)
+
+        param_field(param_name='voltage', row=axis_id, column=14, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='current', row=axis_id, column=16, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='temperature', row=axis_id, column=18, frame=frame, axis_id=axis_id, param_value=-1)
+
+        
     
     for axis_id in range(1,7):
         axis_params(f'axis {axis_id}', frame, axis_id)

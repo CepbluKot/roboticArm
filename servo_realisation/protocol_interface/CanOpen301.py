@@ -82,7 +82,7 @@ class CanOpen301(ProtocolInterface):
             self.__current_check_command_short: on_current_check,
             self.__PWM_check_command_short: on_pwm_check,
             self.__save_command_short: on_saved_parameters_check,
-
+            self.__speed_loop_integration_time_command_short: on_speed_loop_integration_time
         }
 
         self.device = hardware_interface
@@ -817,4 +817,3 @@ class CanOpen301(ProtocolInterface):
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
-

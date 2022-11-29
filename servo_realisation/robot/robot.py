@@ -81,6 +81,7 @@ class Robot:
         for servo_id in self.servos:
             if self.servos[servo_id].read_target_pos() != positions[servo_id]:
                 if positions[servo_id] != -1:
+                    print('send', servo_id, positions[servo_id])
                     self.protocol_interface.send_target_pos(
                         servo_id=servo_id, value=positions[servo_id]
                     )
