@@ -442,7 +442,7 @@ class CanOpen301(ProtocolInterface):
         bytes_code = self.__get_bytes_code(
             num_of_bytes=num_of_bytes_for_command, is_read=1
         )
-        print('command_byte_second',command_byte_second, 'command_byte_second_hex',command_byte_second_hex, 'command_byte_first',command_byte_first, 'command_byte_first_hex',command_byte_first_hex)
+        # print('command_byte_second',command_byte_second, 'command_byte_second_hex',command_byte_second_hex, 'command_byte_first',command_byte_first, 'command_byte_first_hex',command_byte_first_hex)
         final_command = (bytes_code, command_byte_second, command_byte_first, 0)
 
         output_command = canalystii.Message(
@@ -572,7 +572,7 @@ class CanOpen301(ProtocolInterface):
 
         command_id = command_byte_first, command_byte_second
         
-        print('command_id',command_id, final_command)
+        # print('command_id',command_id, final_command)
         
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read

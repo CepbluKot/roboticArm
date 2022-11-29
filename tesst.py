@@ -97,12 +97,12 @@ def interpol_call_for_thread():
         data[axis_id] = axis_data[axis_id]()
 
 
-    first_ser = int(float(data[1]))
-    sec_ser =int(float(data[2]))
-    thir_ser = int(float(data[3]))
-    # fourth_ser =int(float(data[4]))
-    fifth_ser =int(float(data[5]))
-    sixth_ser =int(float(data[6]))
+    first_ser = round(float(data[1]))
+    sec_ser =round(float(data[2]))
+    thir_ser = round(float(data[3]))
+    # fourth_ser =round(float(data[4]))
+    fifth_ser =round(float(data[5]))
+    sixth_ser =round(float(data[6]))
 
 
     positions = {1: 32768*50/360*first_ser, 

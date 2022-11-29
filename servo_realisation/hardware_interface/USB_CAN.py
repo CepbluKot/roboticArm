@@ -47,7 +47,7 @@ class MessagesBuffer:
                     if is_read in self.messages_buffer[command_id][servo_id]:
                         msg = self.messages_buffer[command_id][servo_id][is_read]
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
-                        print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
+                        # print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
     
     def check_is_empty(self):
         with self.lock:
@@ -115,7 +115,7 @@ class USB_CAN(HardwareInterface):
             if recv:
                 for message in recv:
 
-                    print("recieved --> ", message)
+                    # print("recieved --> ", message)
                     parsed = self.on_recieve(message)
                     self.__queue_recieved_msg_handler(parsed)
 
@@ -189,7 +189,7 @@ class USB_CAN(HardwareInterface):
 
     def send(self, message: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         try:
-            print('added to buffer:', 'servo_id', servo_id,  'command_id', command_id, )
+            # print('added to buffer:', 'servo_id', servo_id,  'command_id', command_id, )
             self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id, is_read=is_read)
             return self.device.send(channel=self.bus_id, messages=message)
             # pass
