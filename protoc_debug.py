@@ -20,18 +20,21 @@ def on_pos(receieved_message):
 
 
 def on_speed(receieved_message: ReceievedMessage):
-    print('woow', receieved_message.decoded_data)
-
-
-def on_target_pos(receieved_message):
     pass
+
+
+def on_target_pos(receieved_message: ReceievedMessage):
+    print('woah', receieved_message.decoded_data)
 
 
 def on_error_check(receieved_message):
     pass
 
-interfec = USB_CAN.USB_CAN(0, 1000000, on_msg)
-protoc = CanOpen301(interfec, on_speed, on_accel, on_mode, on_pos, on_target_pos,on_error_check)
+def on_voltage(receieved_message: ReceievedMessage):
+    print('voltage', receieved_message.decoded_data/327)
 
-protoc.send_speed(1, 60)
-protoc.read_speed(1)
+interfec = USB_CAN.USB_CAN(0, 1000000, on_msg)
+protoc = CanOpen301(interfec, on_speed, on_accel, on_mode, on_pos, on_target_pos,on_error_check, on_voltage)
+
+
+protoc.read_voltage(1)

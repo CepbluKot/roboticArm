@@ -1,6 +1,6 @@
 import canalystii, time
 from servo_realisation.hardware_interface import USB_CAN
-from servo_realisation.protocol_interface.CanOpen301 import CanOpen301
+from servo_realisation.protocol_interface.CanOpen301 import CanOpen301, ReceievedMessage
 from servo_realisation.robot.robot import Robot
 from gui.output import init_gui
 
@@ -12,26 +12,26 @@ def on_msg(msg: canalystii.protocol.Message):
     return parsed
 
 
-def on_accel(receieved_message):
+def on_accel(receieved_message: ReceievedMessage):
     pass
 
-def on_mode(receieved_message):
-    pass
-
-
-def on_pos(receieved_message):
+def on_mode(receieved_message: ReceievedMessage):
     pass
 
 
-def on_speed(receieved_message):
+def on_pos(receieved_message: ReceievedMessage):
     pass
 
 
-def on_target_pos(receieved_message):
+def on_speed(receieved_message: ReceievedMessage):
     pass
 
 
-def on_error_check(receieved_message):
+def on_target_pos(receieved_message: ReceievedMessage):
+    pass
+
+
+def on_error_check(receieved_message: ReceievedMessage):
     pass
 
 
@@ -82,7 +82,6 @@ def get_speed_call():
     return robt.read_speed(1)
 
 def get_accel_call():
-    print('accel',robt.read_acceleration(1))
     return robt.read_acceleration(1)
 
 def get_sync_call():
