@@ -12,27 +12,31 @@ def on_msg(msg: canalystii.protocol.Message):
     return parsed
 
 
-def modify_accel(axis_id, value):
+def on_accel(receieved_message):
     pass
 
-def modify_mode(axis_id, value):
-    pass
-
-
-def modify_pos(axis_id, value):
+def on_mode(receieved_message):
     pass
 
 
-def modify_speed(axis_id, value):
+def on_pos(receieved_message):
     pass
 
 
-def modify_target_pos(axis_id, value):
+def on_speed(receieved_message):
+    pass
+
+
+def on_target_pos(receieved_message):
+    pass
+
+
+def on_error_check(receieved_message):
     pass
 
 
 interfec = USB_CAN.USB_CAN(0, 1000000, on_msg)
-protoc = CanOpen301(interfec, modify_speed, modify_accel, modify_mode, modify_pos, modify_target_pos)
+protoc = CanOpen301(interfec, on_speed, on_accel, on_mode, on_pos, on_target_pos,on_error_check)
 robt = Robot(5, protoc, assigned_servos_ids=[1, 2, 3, 5, 6])
 
 robt.set_mode(1)

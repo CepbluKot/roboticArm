@@ -34,29 +34,34 @@ class CanOpen301(ProtocolInterface):
     __RPDO4_object = 0x500
     __SDO_object = 0x600
 
-    __speed_command_short = __speed_command_full // 10000
-    __accel_command_short = __accel_command_full // 10000
-    __mode_command_short = __mode_command_full // 10000
-    __save_command_short = __save_command_full // 10000
-    __pos_command_short = __pos_command_full // 10000
-
     def __init__(
         self,
         hardware_interface: HardwareInterface,
-        on_modify_speed: typing.Callable[[ReceievedMessage], None],
-        on_modify_accel: typing.Callable[[ReceievedMessage], None],
-        on_modify_mode: typing.Callable[[ReceievedMessage], None],
-        on_modify_pos: typing.Callable[[ReceievedMessage], None],
-        on_modify_target_pos: typing.Callable[[ReceievedMessage], None],
+        on_read_speed: typing.Callable[[ReceievedMessage], None],
+        on_read_accel: typing.Callable[[ReceievedMessage], None],
+        on_read_mode: typing.Callable[[ReceievedMessage], None],
+        on_read_pos: typing.Callable[[ReceievedMessage], None],
+        on_read_target_pos: typing.Callable[[ReceievedMessage], None],
+        on_read_error_check: typing.Callable[[ReceievedMessage], None],
+        
     ) -> None:
+
+        self.__speed_command_short = self.__get_short_command(self.__speed_command_full)
+        self.__accel_command_short = self.__get_short_command(self.__accel_command_full)
+        self.__mode_command_short = self.__get_short_command(self.__mode_command_full)
+        self.__save_command_short = self.__get_short_command(self.__save_command_full)
+        self.__pos_command_short = self.__get_short_command(self.__pos_command_full)
+        self.__error_check_command_short = int(self.__error_check_command_full[0:2], 16), int(self.__error_check_command_full[2:4], 16)
+
         self.commands_parse_storage: typing.Dict[
             str, typing.Callable[[ReceievedMessage], None]
         ] = {
-            self.__speed_command_short: on_modify_speed,
-            self.__accel_command_short: on_modify_accel,
-            self.__mode_command_short: on_modify_mode,
-            self.__pos_command_short: on_modify_pos,
-            self.__RPDO4_object: on_modify_target_pos,
+            self.__speed_command_short: on_read_speed,
+            self.__accel_command_short: on_read_accel,
+            self.__mode_command_short: on_read_mode,
+            self.__pos_command_short: on_read_pos,
+            self.__interpolation: on_read_target_pos,
+            self.__error_check_command_short: on_read_error_check
         }
 
         self.device = hardware_interface
@@ -64,6 +69,14 @@ class CanOpen301(ProtocolInterface):
     def __init_list_of_bytes(self, lenth):
         list_of_bytes = (0,) * lenth
         return list_of_bytes
+
+    def __get_short_command(self, full_command: int):
+        first_byte = full_command // 1000000
+        second_byte = full_command // 10000 - first_byte * 100
+        
+        first_byte_hex_to_dec = first_byte // 10 * 16 + first_byte % 10
+        second_byte_hex_to_dec = second_byte // 10 * 16 + second_byte % 10
+        return first_byte_hex_to_dec, second_byte_hex_to_dec
 
     def parse_recieve(self, msg: canalystii.Message) -> ReceievedMessage:
 
@@ -83,31 +96,35 @@ class CanOpen301(ProtocolInterface):
             )
             recieved_command.command_data = self.__interpolation
             is_read = False
+            recieved_command.is_read = is_read
+
+            if recieved_command.command_data in self.commands_parse_storage:
+                self.commands_parse_storage[recieved_command.command_data](recieved_command)
 
         elif num_of_bytes_to_read == "0x60":
             recieved_command.decoded_data = "success"
             is_read = False
-            recieved_command.command_data = data[2] * 100 + data[1]
+            recieved_command.is_read = is_read
+            recieved_command.command_data = data[2], data[1]
 
         elif num_of_bytes_to_read == "0x80":
             recieved_command.decoded_data = "fail"
             is_read = False
-            recieved_command.command_data = data[2] * 100 + data[1]
+            recieved_command.is_read = is_read
+            recieved_command.command_data = data[2], data[1]
 
         else:
             recieved_command.decoded_data = int.from_bytes(
                 bytes(data)[4:], byteorder="little"
             )
             is_read = True
-            
-            recieved_command.command_data = data[2] * 100 + data[1]
-          
-        recieved_command.is_read = is_read
+            recieved_command.is_read = is_read
+            recieved_command.command_data = data[2], data[1]
+        
+            if recieved_command.command_data in self.commands_parse_storage:
+                self.commands_parse_storage[recieved_command.command_data](recieved_command)
 
         return recieved_command
-
-    def get_command_id(self, msg: canalystii.Message):
-        return int(str(msg.data[2]) + str(msg.data[1]))
 
     def on_message(self, msg: canalystii.Message):
         return self.parse_recieve(msg)
@@ -179,7 +196,7 @@ class CanOpen301(ProtocolInterface):
             data=list_of_bytes,
             can_id=address + servo_id,
         )
-        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
 
         # print("send speed --> ", output_command, list_of_bytes)
 
@@ -229,7 +246,7 @@ class CanOpen301(ProtocolInterface):
 
         # print("send mode --> ", output_command)
 
-        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -277,7 +294,7 @@ class CanOpen301(ProtocolInterface):
 
         # print("send accel --> ", output_command)
 
-        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -322,7 +339,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -415,7 +432,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -456,7 +473,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -498,7 +515,7 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
@@ -532,10 +549,9 @@ class CanOpen301(ProtocolInterface):
             can_id=address + servo_id,
         )
 
-        command_id = int(command_byte_first) * 100 + int(command_byte_second)
+        command_id = command_byte_first, command_byte_second
         
         print('command_id',command_id, final_command)
-
         
         self.device.send(
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read

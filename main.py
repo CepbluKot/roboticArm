@@ -26,10 +26,10 @@ def modify_target_pos():
 dev = servo_realisation.hardware_interface.USB_CAN.USB_CAN(0)
 protocol = servo_realisation.protocol_interface.CanOpen301.CanOpen301(
     device=dev,
-    on_modify_accel=modify_accel,
-    on_modify_mode=modify_mode,
-    on_modify_pos=modify_pos,
-    on_modify_speed=modify_speed,
-    on_modify_target_pos=modify_target_pos,
+    on_read_accel=modify_accel,
+    on_read_mode=modify_mode,
+    on_read_pos=modify_pos,
+    on_read_speed=modify_speed,
+    on_read_target_pos=modify_target_pos,
 )
 time.sleep(1)
