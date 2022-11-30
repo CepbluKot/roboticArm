@@ -209,11 +209,10 @@ def checker():
             protoc.read_error_checker(axis_id)
             protoc.read_temperature(axis_id)
             protoc.read_voltage(axis_id)
-            
 
 
-checkthr = threading.Thread(target=checker)
+# checkthr = threading.Thread(target=checker)
 
-checkthr.start()
+# checkthr.start()
 
 init_gui(interpolation_call=interpolation_call, get_axis_value_funcs_dict=axis_data, set_speed_call=set_speed_call, set_accel_call=set_accel_call, set_sync_call=set_sync_call, get_speed_call=get_speed_call, get_accel_call=get_accel_call, get_sync_call=get_sync_call, set_zero_pos_calls=set_zero_pos_calls, save_settings_calls=save_settings_calls)

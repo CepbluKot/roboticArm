@@ -12,13 +12,15 @@ def init_gui(interpolation_call: typing.Callable, get_axis_value_funcs_dict: typ
     window = Tk()
     window.title("Robot service app")
     window.geometry('1500x900')
-
+    
 
     tab_control = Notebook(window)  
     tab1 = Frame(tab_control)  
     tab2 = Frame(tab_control)  
     tab3 = Frame(tab_control)  
     tab4 = Frame(tab_control)
+    tab4.pack(fill=BOTH, expand=1)
+    
     tab_control.add(tab1, text='controls')  
     tab_control.add(tab2, text='data')  
     tab_control.add(tab3, text='config')
