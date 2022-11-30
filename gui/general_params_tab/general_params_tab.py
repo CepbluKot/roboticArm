@@ -1,4 +1,4 @@
-import pydantic
+
 from tkinter import *
 from gui.general_params_tab.storages.output import general_params_repo
 

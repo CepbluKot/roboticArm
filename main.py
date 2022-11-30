@@ -1,4 +1,6 @@
 import canalystii, time, threading
+from tkinter.ttk import  Treeview
+
 from servo_realisation.hardware_interface import USB_CAN
 from servo_realisation.protocol_interface.CanOpen301 import CanOpen301, ReceievedMessage
 from servo_realisation.robot.robot import Robot
@@ -196,6 +198,47 @@ set_zero_pos_calls = {1:set_zero_pos_first_axis_call, 2:set_zero_pos_sec_axis_ca
 save_settings_calls = {1:save_settings_first_axis_call, 2:save_settings_sec_axis_call, 3:save_settings_third_axis_call, 4:save_settings_fourth_axis_call, 5:save_settings_fifth_axis_call, 6:save_settings_sixth_axis_call}
 
 
+def start_ride_call(tree: Treeview):
+    def smth():
+        prev_row = None
+
+        for itm in tree.get_children():
+            curr_row = tree.item(itm)
+            if prev_row:
+                prev_row_tag = prev_row['tags'][0]
+                tree.tag_configure(prev_row_tag, background='white')
+
+            curr_row_tag = curr_row['tags'][0]
+            tree.tag_configure(curr_row_tag, background='blue')
+            
+            curr_row_vals = curr_row['values']
+
+            positions = {}
+
+            axis_id = 1
+            for axis_val in curr_row_vals:
+                if axis_val == 'None':
+                    positions[axis_id] = -1
+                else:
+                    positions[axis_id] = 32768*50/360*float(axis_val)
+                axis_id += 1
+
+            print(positions)
+            robt.set_target_pos(positions)
+            robt.move()
+            time.sleep(6)
+
+            prev_row = curr_row
+            
+
+        if prev_row:
+            prev_row_tag = prev_row['tags'][0]
+            tree.tag_configure(prev_row_tag, background='white')
+
+
+    test_thr = threading.Thread(target=smth)
+    test_thr.start()
+
 
 def checker():
     while 1:
@@ -215,4 +258,4 @@ def checker():
 
 # checkthr.start()
 
-init_gui(interpolation_call=interpolation_call, get_axis_value_funcs_dict=axis_data, set_speed_call=set_speed_call, set_accel_call=set_accel_call, set_sync_call=set_sync_call, get_speed_call=get_speed_call, get_accel_call=get_accel_call, get_sync_call=get_sync_call, set_zero_pos_calls=set_zero_pos_calls, save_settings_calls=save_settings_calls)
+init_gui(interpolation_call=interpolation_call, get_axis_value_funcs_dict=axis_data, set_speed_call=set_speed_call, set_accel_call=set_accel_call, set_sync_call=set_sync_call, get_speed_call=get_speed_call, get_accel_call=get_accel_call, get_sync_call=get_sync_call, set_zero_pos_calls=set_zero_pos_calls, save_settings_calls=save_settings_calls, points_ride_call=start_ride_call)

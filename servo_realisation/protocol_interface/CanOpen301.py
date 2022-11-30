@@ -2,7 +2,7 @@ import typing
 import textwrap
 import canalystii
 import threading
-import pydantic
+
 from servo_realisation.protocol_interface.protocol_interface import ProtocolInterface
 from servo_realisation.hardware_interface.hardware_interface import HardwareInterface
 

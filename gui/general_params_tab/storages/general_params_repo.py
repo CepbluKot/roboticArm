@@ -16,7 +16,7 @@ class GeneralParamsRepo:
 
     def get(self, servo_id: int, value_name) -> Label:
         if servo_id in self.repo:
-            print('waat', self.repo[servo_id][value_name])
+ 
             return self.repo[servo_id][value_name]
         else:
             return 0

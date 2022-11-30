@@ -2,7 +2,8 @@ import typing
 from tkinter import *
 import tkinter.ttk as ttk
 
-def points_ride_tab(frame, set_points_call=None, start_ride_call=None):
+
+def points_ride_tab(frame, start_ride_call=None):
 
     params_frame = Frame(master=frame,height=100)
     params_frame.pack()
@@ -48,18 +49,38 @@ def points_ride_tab(frame, set_points_call=None, start_ride_call=None):
 
             else:
                 angles_vals += (None, )
+        
 
-        points_table.insert("", END, values=angles_vals)
-       
+        last_elem_id = 0
 
+        elements = points_table.get_children()
+        if elements:
+            last_elem_id = int(elements[-1][1:])
+        
+        points_table.insert("", END, values=angles_vals, tags=(f'{last_elem_id}'))
+
+ 
+  
+
+    def delete(click_data):
+        try:
+            selected_item = points_table.selection()[0] ## get selected item
+            print('selected_item',selected_item)
+            points_table.delete(selected_item)
+        except:
+            pass
+    
+
+
+    def start_ride_call_with_argc():
+        start_ride_call(points_table)
+    
     send_to_table_btn = Button(params_frame, text='ADD', command=add_btn_call ).grid(column=len(axis_ids_list)+1, row=1, padx=20)
-
-
-    def delete(smth):
-        selected_item = points_table.selection()[0] ## get selected item
-        points_table.delete(selected_item)
-
+    launch = Button(params_frame, text='LAUNCH', command=start_ride_call_with_argc ).grid(column=len(axis_ids_list)+3, row=1, padx=20)
+      
     points_table.bind('<Double-Button-1>', delete)
 
+
+    return points_table
     # points_table['columns'] = ('axis 1', 'axis 2','axis 3','axis 4','axis 5','axis 6',)
     # points_table.insert(values=(1,2,3,4,5,6))
