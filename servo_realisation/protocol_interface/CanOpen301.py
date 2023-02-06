@@ -176,6 +176,7 @@ class CanOpen301(ProtocolInterface):
         return self.device.check_is_device_buffer_empty()
 
     def send_speed(self, servo_id: int, value: int) -> canalystii.Message:
+        
         # value -  в 16 формат с инверсией байт
         command_code_from_documentation = self.__speed_command_full
         address = self.__SDO_object

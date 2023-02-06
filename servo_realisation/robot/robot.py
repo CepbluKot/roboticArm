@@ -63,25 +63,38 @@ class Robot:
                 self.protocol_interface.send_mode(servo_id=servo_id, value=value)
                 self.__modify_mode(servo_id=servo_id, value=value)
 
-    def set_speed(self, value: int):
+    def set_all_axis_speeds(self, value: int):
         for servo_id in self.servos:
             if self.servos[servo_id].read_speed() != value:
                 self.protocol_interface.send_speed(servo_id=servo_id, value=value)
                 self.__modify_speed(servo_id=servo_id, value=value)
-                
-    def set_acceleration(self, value: int):
+
+    def set_axis_speed(self, axis_id: int, value: int):
+        if self.servos[axis_id].read_speed() != value:
+            self.protocol_interface.send_speed(servo_id=axis_id, value=value)
+            self.__modify_speed(servo_id=axis_id, value=value)
+
+    def set_all_axis_acceleration(self, value: int):
         for servo_id in self.servos:
             if self.servos[servo_id].read_acceleration() != value:
                 self.protocol_interface.send_acceleration(
                     servo_id=servo_id, value=value
                 )
                 self.__modify_acceleration(servo_id=servo_id, value=value)
+    
+    def set_axis_accel(self, axis_id: int, value: int,):
+        print('accel axis', axis_id, value)
+        if self.servos[axis_id].read_acceleration() != value:
+            self.protocol_interface.send_acceleration(
+                servo_id=axis_id, value=value
+            )
+            self.__modify_acceleration(servo_id=axis_id, value=value)
 
     def set_target_pos(self, positions: typing.List[int]):
         for servo_id in self.servos:
             if self.servos[servo_id].read_target_pos() != positions[servo_id]:
                 if positions[servo_id] != -1:
-                    print('send', servo_id, positions[servo_id])
+                    # print('send', servo_id, positions[servo_id])
                     self.protocol_interface.send_target_pos(
                         servo_id=servo_id, value=positions[servo_id]
                     )

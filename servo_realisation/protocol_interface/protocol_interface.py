@@ -31,6 +31,10 @@ class ProtocolInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
+    def read_position(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
     def read_speed(self, servo_id: int) -> canalystii.Message:
         raise NotImplemented
 

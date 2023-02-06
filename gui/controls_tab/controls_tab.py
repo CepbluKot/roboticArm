@@ -3,13 +3,13 @@ from tkinter.ttk import Combobox, Button, Scale, Label
 from tkinter import *
 
 
-def controls_tab(frame, interpolation_call: typing.Callable, get_axis_value_funcs: typing.Dict, set_speed_call: typing.Callable, set_accel_call: typing.Callable, set_sync_call: typing.Callable, get_speed_call: typing.Callable, get_accel_call: typing.Callable, get_sync_call: typing.Callable):
+def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos_value_funcs: typing.Dict, set_speed_call: typing.Callable, set_accel_call: typing.Callable, set_sync_call: typing.Callable, get_speed_call: typing.Callable, get_accel_call: typing.Callable, get_sync_call: typing.Callable):
     def eng_control(location, frame, axis_id):
         scale = Scale(frame, from_=0, to=360,  orient=HORIZONTAL, length=200)    
         scale.grid(row=location+1, column=2)
         scale.set(0)
 
-        get_axis_value_funcs[axis_id] = scale.get
+        get_axis_target_pos_value_funcs[axis_id] = scale.get
 
         def plus_scale():
             cur_val = scale.get()

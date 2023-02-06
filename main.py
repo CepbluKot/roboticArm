@@ -1,3 +1,5 @@
+from typing import Dict, Callable
+
 import canalystii, time, threading
 from tkinter.ttk import  Treeview
 
@@ -8,6 +10,47 @@ from gui.output import init_gui
 from gui.general_params_tab.storages.output import general_params_repo
 
 
+current_positions = {}
+axis_speeds = {}
+
+################### syncronisation speed module 
+
+def syncronise(movement_time: int, current_positions: Dict[int, int], target_positions: Dict[int, int], max_acceleration: int=300, max_speed: int=100):
+    percent_of_time_for_acceleration = 15 / 100 #   для ускорения и замедления
+    percent_of_time_for_const_speed_move = (100 - percent_of_time_for_acceleration) / 100
+
+    time_for_accel = movement_time * percent_of_time_for_acceleration
+    time_for_const_speed_move = movement_time * percent_of_time_for_const_speed_move
+
+    accelerations = {}
+    speeds = {}
+    
+    for servo_id in current_positions:
+        if current_positions[servo_id] > 4000000000:
+            current_positions[servo_id] = 0
+        
+        distance = abs(current_positions[servo_id] - target_positions[servo_id]) 
+
+        if distance < 500:
+            continue
+
+        axis_speed = distance / ((1/time_for_const_speed_move) + time_for_accel)
+        axis_speed = axis_speed / ( 32768 * 50 / 60)
+        axis_acceleration = axis_speed / time_for_accel
+
+        if axis_speed > max_speed:
+            print('speed err', servo_id, axis_speed)
+            return None
+        
+        if axis_acceleration > max_acceleration:
+            print('accel err', servo_id, axis_acceleration)
+            return None
+
+        accelerations[servo_id] = axis_acceleration
+        speeds[servo_id] = axis_speed
+
+    return speeds, accelerations
+
 axis_data = {}
 
 def on_msg(msg: canalystii.protocol.Message):
@@ -15,6 +58,9 @@ def on_msg(msg: canalystii.protocol.Message):
     return parsed
 
 def on_read_speed(receieved_message: ReceievedMessage):
+
+    axis_speeds[receieved_message.servo_id] = receieved_message.decoded_data
+
     widget = general_params_repo.get(receieved_message.servo_id, 'speed')
     if widget:
         widget.config(text=receieved_message.decoded_data)
@@ -30,6 +76,9 @@ def on_read_mode(receieved_message: ReceievedMessage):
         widget.config(text=receieved_message.decoded_data)
 
 def on_read_pos(receieved_message: ReceievedMessage):
+
+    current_positions[receieved_message.servo_id] = receieved_message.decoded_data
+
     widget =general_params_repo.get(receieved_message.servo_id, 'positon')
     if widget:
         widget.config(text=receieved_message.decoded_data)
@@ -88,42 +137,48 @@ protoc = CanOpen301(interfec,
 robt = Robot(5, protoc, assigned_servos_ids=[1, 2, 3, 5 , 6])
 
 robt.set_mode(1)
-robt.set_speed(60)
-robt.set_acceleration(20)
+robt.set_all_axis_speeds(60)
+robt.set_all_axis_acceleration(20)
 
 
 
 def interpol_call_for_thread():
-    data = {}
+    max_accel = 300
+    max_speed = 1000
+    target_positions = {}
+    speeds, accelerations = {}, {}
+
     for axis_id in axis_data:
-        data[axis_id] = axis_data[axis_id]()
+        if axis_id == 4:
+            axis_id += 1
 
+        axis_target_pos = axis_data[axis_id]()
+        target_positions[axis_id] = 32768*50/360*round(float(axis_target_pos))
+        
+        # print('TARGET pos', axis_id, target_positions[axis_id])
+        # print('CURRENT pos', axis_id, current_positions[axis_id])
 
-    first_ser = round(float(data[1]))
-    sec_ser =round(float(data[2]))
-    thir_ser = round(float(data[3]))
-    # fourth_ser =round(float(data[4]))
-    fifth_ser =round(float(data[5]))
-    sixth_ser =round(float(data[6]))
+    robt.set_target_pos(target_positions)
+ 
+    speeds, accelerations = syncronise(movement_time=4, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
+    
+    print('speds', speeds)
 
-
-    positions = {1: 32768*50/360*first_ser, 
-                2: 32768*50/360*sec_ser, 
-                3: 32768*50/360*thir_ser, 
-                5: 32768*50/360*fifth_ser, 
-                6: 32768*50/360*sixth_ser,
-                # 4: 32768*50/360*fourth_ser
-                }
-
-    robt.set_target_pos(positions)
-
-    # print('wait buffer')
-    # while not protoc.check_is_buffer_empty():
-    #     pass
-
+    print('\n\n accels', accelerations)
+    
+    if not accelerations:
+        print('INTERPOL MOVE ERROR')
+        return None
+    
+    for servo_id in accelerations:
+        if servo_id == 4:
+            continue
+        
+        robt.set_axis_accel(servo_id, accelerations[servo_id] * 10)
+        robt.set_axis_speed(servo_id, speeds[servo_id] * 10)
+    
     print('done')
     robt.move()
-
 
 def interpolation_call():
     interp_thr = threading.Thread(target=interpol_call_for_thread)
@@ -142,10 +197,10 @@ def get_sync_call():
 
 
 def set_speed_call(value):
-    robt.set_speed(float(value))
+    robt.set_all_axis_speeds(float(value))
 
 def set_accel_call(value):
-    robt.set_acceleration(float(value))
+    robt.set_all_axis_acceleration(float(value))
 
 def set_sync_call(value):
     # robt.set_speed(60)
@@ -223,7 +278,7 @@ def start_ride_call(tree: Treeview):
                     positions[axis_id] = 32768*50/360*float(axis_val)
                 axis_id += 1
 
-            print(positions)
+            # print(positions)
             robt.set_target_pos(positions)
             robt.move()
             time.sleep(6)
@@ -238,7 +293,7 @@ def start_ride_call(tree: Treeview):
 
     test_thr = threading.Thread(target=smth)
     test_thr.start()
-
+    
 
 def checker():
     while 1:
@@ -254,8 +309,8 @@ def checker():
             protoc.read_voltage(axis_id)
 
 
-# checkthr = threading.Thread(target=checker)
+checkthr = threading.Thread(target=checker)
 
-# checkthr.start()
+checkthr.start()
 
-init_gui(interpolation_call=interpolation_call, get_axis_value_funcs_dict=axis_data, set_speed_call=set_speed_call, set_accel_call=set_accel_call, set_sync_call=set_sync_call, get_speed_call=get_speed_call, get_accel_call=get_accel_call, get_sync_call=get_sync_call, set_zero_pos_calls=set_zero_pos_calls, save_settings_calls=save_settings_calls, points_ride_call=start_ride_call)
+init_gui(interpolation_call=interpolation_call, get_axis_target_pos_value_funcs_dict=axis_data, set_speed_call=set_speed_call, set_accel_call=set_accel_call, set_sync_call=set_sync_call, get_speed_call=get_speed_call, get_accel_call=get_accel_call, get_sync_call=get_sync_call, set_zero_pos_calls=set_zero_pos_calls, save_settings_calls=save_settings_calls, points_ride_call=start_ride_call)
