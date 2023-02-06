@@ -16,7 +16,7 @@ axis_speeds = {}
 ################### syncronisation speed module 
 
 def syncronise(movement_time: int, current_positions: Dict[int, int], target_positions: Dict[int, int], max_acceleration: int=300, max_speed: int=100):
-    percent_of_time_for_acceleration = 15 / 100 #   для ускорения и замедления
+    percent_of_time_for_acceleration = 5 / 100 #   для ускорения и замедления
     percent_of_time_for_const_speed_move = (100 - percent_of_time_for_acceleration) / 100
 
     time_for_accel = movement_time * percent_of_time_for_acceleration
@@ -24,7 +24,7 @@ def syncronise(movement_time: int, current_positions: Dict[int, int], target_pos
 
     accelerations = {}
     speeds = {}
-    
+
     for servo_id in current_positions:
         if current_positions[servo_id] > 4000000000:
             current_positions[servo_id] = 0
@@ -170,6 +170,10 @@ def interpol_call_for_thread():
         print('INTERPOL MOVE ERROR')
         return None
     
+    if not speeds:
+        print('INTERPOL MOVE ERROR')
+        return None
+
     for servo_id in accelerations:
         if servo_id == 4:
             continue
@@ -278,13 +282,40 @@ def start_ride_call(tree: Treeview):
                     positions[axis_id] = 32768*50/360*float(axis_val)
                 axis_id += 1
 
-            # print(positions)
+      
+            max_accel = 300
+            max_speed = 1000    
+
+            speeds, accelerations = {}, {}
+
             robt.set_target_pos(positions)
-            robt.move()
-            time.sleep(6)
+            
+            target_positions = positions
+            speeds, accelerations = syncronise(movement_time=2, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
+    
+            print('speds', speeds)
+
+            print('\n\n accels', accelerations)
+            
+            if not accelerations:
+                print('INTERPOL MOVE ERROR')
+                return None
+
+            if not speeds:
+                print('INTERPOL MOVE ERROR')
+                return None
+            
+            for servo_id in accelerations:
+                if servo_id == 4:
+                    continue
+                
+                robt.set_axis_accel(servo_id, accelerations[servo_id] * 10)
+                robt.set_axis_speed(servo_id, speeds[servo_id] * 10)
 
             prev_row = curr_row
             
+            robt.move()
+            time.sleep(6)
 
         if prev_row:
             prev_row_tag = prev_row['tags'][0]
