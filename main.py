@@ -51,6 +51,44 @@ def syncronise(movement_time: int, current_positions: Dict[int, int], target_pos
 
     return speeds, accelerations
 
+
+def syncronise_2(current_positions: Dict[int, int], target_positions: Dict[int, int], max_speed: int=400):
+    percent_for_acceleration = 40 / 100
+    percent_for_speed = 80 / 100
+
+    base_speed = percent_for_speed * max_speed
+    base_accel = percent_for_acceleration * max_speed
+
+    max_distance = -1
+    distances = {}
+    accelerations = {}
+    speeds = {}
+
+    for servo_id in current_positions:
+        if current_positions[servo_id] > 4000000000:
+            current_positions[servo_id] = 0
+        
+        distance = abs(current_positions[servo_id] - target_positions[servo_id]) 
+        distances[servo_id] = distance
+
+    max_distance_axis_id = max(distances, key=distances.get)
+    max_distance = distances[max_distance_axis_id]
+
+    for servo_id in distances :
+        if distances[servo_id] < 500:
+            continue
+        
+        axis_sync_coef = distances[servo_id] / max_distance
+
+        axis_speed = base_speed * axis_sync_coef
+        axis_acceleration = base_accel * axis_sync_coef
+
+        accelerations[servo_id] = axis_acceleration
+        speeds[servo_id] = axis_speed
+
+    return speeds, accelerations
+
+
 axis_data = {}
 
 def on_msg(msg: canalystii.protocol.Message):
@@ -144,7 +182,7 @@ robt.set_all_axis_acceleration(20)
 
 def interpol_call_for_thread():
     max_accel = 300
-    max_speed = 1000
+    max_speed = 500
     target_positions = {}
     speeds, accelerations = {}, {}
 
@@ -160,8 +198,11 @@ def interpol_call_for_thread():
 
     robt.set_target_pos(target_positions)
  
-    speeds, accelerations = syncronise(movement_time=4, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
+    # speeds, accelerations = syncronise(movement_time=4, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
     
+    speeds, accelerations = syncronise_2(current_positions=current_positions, target_positions=target_positions, max_speed=max_speed)
+
+
     print('speds', speeds)
 
     print('\n\n accels', accelerations)
@@ -178,8 +219,8 @@ def interpol_call_for_thread():
         if servo_id == 4:
             continue
         
-        robt.set_axis_accel(servo_id, accelerations[servo_id] * 10)
-        robt.set_axis_speed(servo_id, speeds[servo_id] * 10)
+        robt.set_axis_accel(servo_id, accelerations[servo_id])
+        robt.set_axis_speed(servo_id, speeds[servo_id])
     
     print('done')
     robt.move()
@@ -284,15 +325,17 @@ def start_ride_call(tree: Treeview):
 
       
             max_accel = 300
-            max_speed = 1000    
+            max_speed = 200    
 
             speeds, accelerations = {}, {}
 
             robt.set_target_pos(positions)
             
             target_positions = positions
-            speeds, accelerations = syncronise(movement_time=2, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
-    
+            # speeds, accelerations = syncronise(movement_time=2, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
+
+            speeds, accelerations = syncronise_2(current_positions=current_positions, target_positions=target_positions, max_speed=max_speed)
+
             print('speds', speeds)
 
             print('\n\n accels', accelerations)
