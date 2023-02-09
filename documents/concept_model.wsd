@@ -1,0 +1,64 @@
+@startuml
+
+class Manipulator {
+   states_of_freedom : int
+   
+   assigned_engines_ids: List[int]
+   void init(assigned_engines_ids: List[int])
+   void move_to_pos(values: List[int])
+}
+
+
+class CommandConstructor{
+     general_commands_data_storage : Dict
+  
+     create_command(address: int, value: int, command_id: int)
+}
+
+class ServoMotor {
+   id : int
+   control_interface : ControlInterface 
+   command_constructor : CommandConstructor
+  
+   is_active : bool
+  
+   current_pos : int
+   target_pos : int
+  
+   speed : int
+   mode : int
+  
+   error_code : int
+  
+   void init(id: int, control_interface: ControlInterface, command_constructor: CommandConstructor)
+   void check_is_active()
+   
+   void set_zero_pos()
+   void set_mode(value: int)
+   void set_speed(value: int)
+   void set_target_pos(value: int)
+   
+   void read_mode()
+   void read_speed()
+   void read_pos()
+   void read_target_pos()
+   void read_error_code()
+
+   void send_general_move_command()
+}
+
+
+class ControlInterface {
+   device
+  
+   void init(channel: int)
+   void send(message, channel: int)
+   void recieve(channel: int)
+   void close_connection(channel: int)
+}
+
+CommandConstructor --* ServoMotor : композиция
+ServoMotor --* Manipulator : композиция
+ControlInterface --o ServoMotor : агрегация
+
+@enduml
