@@ -53,3 +53,31 @@ class ProtocolInterface(abc.ABC):
     @abc.abstractmethod
     def check_is_buffer_empty(self) -> bool:
         raise NotImplemented
+
+    @abc.abstractmethod
+    def read_save(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def read_voltage(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def read_temperature(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def read_current(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+    
+    @abc.abstractmethod
+    def read_position(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def read_speed_loop_integration_time(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def send_enable_output(self, servo_id: int) -> canalystii.Message:
+        raise NotImplemented
