@@ -3,7 +3,7 @@ from tkinter.ttk import Combobox, Button, Scale, Label
 from tkinter import *
 
 
-def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos_value_funcs: typing.Dict, set_speed_call: typing.Callable, set_accel_call: typing.Callable, set_sync_call: typing.Callable):
+def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos_value_funcs: typing.Dict, set_speed_call: typing.Callable, set_accel_call: typing.Callable, set_sync_call: typing.Callable, get_speed_call: typing.Callable, get_accel_call: typing.Callable, get_sync_call: typing.Callable):
     def eng_control(location, frame, axis_id):
         scale = Scale(frame, from_=0, to=360,  orient=HORIZONTAL, length=200)    
         scale.grid(row=location+1, column=2)
@@ -60,17 +60,17 @@ def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos
 
     def robot_curr_params(frame):
         speed_lbl = Label(frame, text='speed', background='white').grid(padx=30, pady=10, row=1, column=8+1, )
-        speed_val_lbl = Label(frame, text=str('speed'))
+        speed_val_lbl = Label(frame, text=str(get_speed_call()))
         
         speed_val_lbl.grid(row=1, column=9+1, padx=10, pady=10)
 
         accel_lbl = Label(frame, text='accel', background='white' ).grid(padx=30, pady=10, row=2, column=8+1, )
-        accel_val_lbl = Label(frame, text=str('accel'))
+        accel_val_lbl = Label(frame, text=str(get_accel_call()))
         
         accel_val_lbl.grid(row=2, column=9+1, padx=10, pady=10)
 
         sync_lbl = Label(frame, text='sync', background='white' ).grid(padx=30, pady=10, row=3, column=8+1, )
-        sync_val_lbl = Label(frame, text=str('sync'))
+        sync_val_lbl = Label(frame, text=str(get_sync_call()))
         
         sync_val_lbl.grid(row=3, column=9+1, padx=10, pady=10)
 

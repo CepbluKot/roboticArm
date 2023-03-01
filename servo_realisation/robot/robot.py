@@ -1,4 +1,4 @@
-import typing, time, threading
+import typing
 
 from servo_realisation.protocol_interface.protocol_interface import ProtocolInterface
 from servo_realisation.robot.servo_motor import ServoMotor
@@ -28,9 +28,6 @@ class Robot:
         else:
             for servo_id in range(1, DoF + 1):
                 self.servos[servo_id] = ServoMotor(servo_id)
-
-        params_check_thr = threading.Thread(target=self.params_checker)
-        params_check_thr.start()
 
 
     def __modify_acceleration(self, servo_id: int, value: int):
@@ -86,6 +83,7 @@ class Robot:
                 self.__modify_acceleration(servo_id=servo_id, value=value)
     
     def set_axis_accel(self, axis_id: int, value: int,):
+        print('accel axis', axis_id, value)
         if self.servos[axis_id].read_acceleration() != value:
             self.protocol_interface.send_acceleration(
                 servo_id=axis_id, value=value
@@ -94,9 +92,9 @@ class Robot:
 
     def set_target_pos(self, positions: typing.List[int]):
         for servo_id in self.servos:
-            # if self.servos[servo_id].read_target_pos() != positions[servo_id]:
+            if self.servos[servo_id].read_target_pos() != positions[servo_id]:
                 if positions[servo_id] != -1:
-                    
+                    # print('send', servo_id, positions[servo_id])
                     self.protocol_interface.send_target_pos(
                         servo_id=servo_id, value=positions[servo_id]
                     )
@@ -122,17 +120,3 @@ class Robot:
 
     def read_target_pos(self, servo_id: int):
         return self.__read_target_pos(servo_id=servo_id)
-
-    def params_checker(self):
-        while True:
-            time.sleep(0.01)
-            for axis_id in range(1,7):
-                pass
-                # self.protocol_interface.read_speed(axis_id)
-                # self.protocol_interface.read_accelearation(axis_id)
-                # self.protocol_interface.read_current(axis_id)
-                self.protocol_interface.read_position(axis_id)
-                # self.protocol_interface.read_mode(axis_id)
-                # self.protocol_interface.read_error_checker(axis_id)
-                # self.protocol_interface.read_temperature(axis_id)
-                # self.protocol_interface.read_voltage(axis_id)
