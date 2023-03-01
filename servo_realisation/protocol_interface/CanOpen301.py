@@ -35,6 +35,30 @@ class CanOpen301(ProtocolInterface):
     __current_check_command_full = 60780010
     __PWM_check_command_full = 26130010
     __speed_loop_integration_time_command_full = '60F90210'
+    __enable_modbus_command_full = 26000010
+    __driver_output_permission_command_full = 26010010
+    __weak_magnet_angle_command_full = 26040010
+    __speed_loop_scale_coefficient_command_full = '60F90110'
+    __position_loop_scale_coefficient_command_full = '60FB0110'
+    __speed_control_command_full = '60FB0210'
+    __polarity_dir_command_full = 26090010
+    __electronic_gear_molecules_command_full = '260A0010'
+    __transfer_electronic_denominator_command_full = '260B0010'
+    __incremental_position_command_full = '260C0020'
+    __current_speed_check_command_full = '606C0010'
+    __system_PWM_output_command_full = 26130010
+    __new_servo_address_command_full = 26150010
+    __stationary_max_power_command_full = 26180010
+    __specials_command_full = 26190010
+    __target_location_cache_command_full = '607A0020'
+    __speed_mode_speed_command_full = '60FF0020'
+    __can_connection_sync_speed_word_command_full = '261C0010'
+    __max_current_command_full = '261D0010'
+    __input_port_status_command_full = '60FD0010'
+    __control_words_command_full = 60400010
+    __status_word_command_full = 60410010
+    __work_mode_command_full = 60600008
+    __goto_home_mode_command_full = 60980008
 
     __RPDO4_object = 0x500
     __SDO_object = 0x600
@@ -67,7 +91,27 @@ class CanOpen301(ProtocolInterface):
         self.__current_check_command_short = self.__get_short_command(self.__current_check_command_full)
         self.__PWM_check_command_short = self.__get_short_command(self.__PWM_check_command_full)
         self.__speed_loop_integration_time_command_short = int(self.__speed_loop_integration_time_command_full[0:2], 16), int(self.__speed_loop_integration_time_command_full[2:4], 16)
-
+        self.__enable_modbus_command_short = self.__get_short_command(self.__enable_modbus_command_full)
+        self.__driver_output_permission_command_short = self.__get_short_command(self.__driver_output_permission_command_full)
+        self.__weak_magnet_angle_command_short = self.__get_short_command(self.__weak_magnet_angle_command_full)
+        self.__speed_loop_scale_coefficient_command_short = int(self.__speed_loop_scale_coefficient_command_full[0:2], 16), int(self.__speed_loop_scale_coefficient_command_full[2:4], 16)
+        self.__position_loop_scale_coefficient_command_short = int(self.__position_loop_scale_coefficient_command_full[0:2], 16), int(self.__position_loop_scale_coefficient_command_full[2:4], 16)
+        self.__speed_control_command_short = int(self.__speed_control_command_full[0:2], 16), int(self.__speed_control_command_full[2:4], 16)
+        self.__polarity_dir_command_short = self.__get_short_command(self.__polarity_dir_command_full)
+        self.__electronic_gear_molecules_command_short = int(self.__electronic_gear_molecules_command_full[0:2], 16), int(self.__electronic_gear_molecules_command_full[2:4], 16)
+        self.__transfer_electronic_denominator_command_short = int(self.__transfer_electronic_denominator_command_full[0:2], 16), int(self.__transfer_electronic_denominator_command_full[2:4], 16)
+        self.__current_speed_command_short = int(self.__current_speed_check_command_full[0:2], 16), int(self.__current_speed_check_command_full[2:4], 16)
+        self.__system_PWM_output_command_short = self.__get_short_command(self.__system_PWM_output_command_full)
+        self.__new_servo_address_command_short = self.__get_short_command(self.__new_servo_address_command_full)
+        self.__stationary_max_power_command_short = self.__get_short_command(self.__stationary_max_power_command_full)
+        self.__specials_command_short = self.__get_short_command(self.__specials_command_full)
+        self.__target_location_cache_command_short = int(self.__target_location_cache_command_full[0:2], 16), int(self.__target_location_cache_command_full[2:4], 16)
+        self.__speed_mode_speed_command_short = int(self.__speed_mode_speed_command_full[0:2], 16), int(self.__speed_mode_speed_command_full[2:4], 16)
+        self.__can_connection_sync_speed_word_command_short = int(self.__can_connection_sync_speed_word_command_full[0:2], 16), int(self.__can_connection_sync_speed_word_command_full[2:4], 16)
+        self.__max_current_command_short = int(self.__max_current_command_full[0:2], 16), int(self.__max_current_command_full[2:4], 16)
+        self.__input_port_status_command_short = int(self.__input_port_status_command_full[0:2], 16), int(self.__input_port_status_command_full[2:4], 16)
+        self.__control_words_command_short = self.__get_short_command(self.__specials_command_full)
+        
         self.commands_parse_storage: typing.Dict[
             str, typing.Callable[[ReceievedMessage], None]
         ] = {
@@ -100,7 +144,6 @@ class CanOpen301(ProtocolInterface):
         return first_byte_hex_to_dec, second_byte_hex_to_dec
 
     def parse_recieve(self, msg: canalystii.Message) -> ReceievedMessage:
-
         id = hex(msg.can_id)
         servo_id = int(id[-1])
         ts = msg.timestamp
@@ -804,6 +847,1785 @@ class CanOpen301(ProtocolInterface):
         bytes_code = self.__get_bytes_code(
             num_of_bytes=num_of_bytes_for_command, is_read=1
         )
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+############ new
+    def send_enable_modbus(self, servo_id: int, value: bool) -> canalystii.Message:
+        command_code_from_documentation = self.__enable_modbus_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_enable_modbus(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__enable_modbus_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_driver_output_permission(self, servo_id: int, value: bool) -> canalystii.Message:
+        command_code_from_documentation = self.__driver_output_permission_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_driver_output_permission(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__driver_output_permission_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_weak_magnet_angle(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__weak_magnet_angle_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_weak_magnet_angle(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__weak_magnet_angle_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_speed_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__speed_loop_scale_coefficient_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_speed_loop_scale_coefficient(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__speed_loop_scale_coefficient_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_position_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__position_loop_scale_coefficient_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_position_loop_scale_coefficient(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__position_loop_scale_coefficient_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_speed_control(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__speed_control_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_speed_control(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__speed_control_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_polarity_dir(self, servo_id: int, value: bool) -> canalystii.Message:
+        command_code_from_documentation = self.__polarity_dir_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_polarity_dir(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__polarity_dir_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_electronic_gear_molecules(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__electronic_gear_molecules_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_electronic_gear_molecules(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__electronic_gear_molecules_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_transfer_electronic_denominator(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__transfer_electronic_denominator_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_transfer_electronic_denominator(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__transfer_electronic_denominator_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_incremental_position(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__incremental_position_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_incremental_position(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__incremental_position_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_current_speed(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__current_speed_check_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_system_pwm_output(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__system_PWM_output_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_servo_address(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__new_servo_address_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_servo_address(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__new_servo_address_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_stationary_max_power(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__stationary_max_power_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_stationary_max_power(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__stationary_max_power_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_specials(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__specials_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_specials(self, servo_id: int) -> canalystii.Message:
+
+        command_code_from_documentation = self.__specials_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_target_location_cache(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__target_location_cache_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_target_location_cache(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__target_location_cache_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_speed_mode_speed(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__speed_mode_speed_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_speed_mode_speed(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__speed_mode_speed_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_can_connection_sync_speed_word(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__can_connection_sync_speed_word_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_can_connection_sync_speed_word(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__can_connection_sync_speed_word_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_max_current(self, servo_id: int, value: int) -> canalystii.Message:
+        command_code_from_documentation = self.__max_current_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        value = value
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_max_current(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__max_current_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def read_input_port_status(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__input_port_status_command_full
+        address = self.__SDO_object
+        is_read = True
+
+        num_of_bytes_for_command = (
+            int(command_code_from_documentation[-2:], 16)
+        ) // 8
+
+        command_byte_first_hex = command_code_from_documentation[0:2]
+        command_byte_second_hex = command_code_from_documentation[2:4]
+        
+        command_byte_first = int(command_byte_first_hex, 16)
+        command_byte_second = int(command_byte_second_hex, 16)
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=is_read
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        
+        # print('command_id',command_id, final_command)
+        
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_control_words(self, servo_id: int, value: int) -> canalystii.Message:  
+        command_code_from_documentation = self.__control_words_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = round(value)
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        # print("send mode --> ", output_command)
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+    
+    def read_control_words(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__control_words_command_full
+        address = self.__SDO_object
+
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_status_word(self, servo_id: int, value: int) -> canalystii.Message:  
+        command_code_from_documentation = self.__status_word_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = round(value)
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        # print("send mode --> ", output_command)
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+    
+    def read_status_word(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__status_word_command_full
+        address = self.__SDO_object
+
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_work_mode(self, servo_id: int, value: int) -> canalystii.Message:  
+        command_code_from_documentation = self.__work_mode_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = round(value)
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        # print("send mode --> ", output_command)
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+    
+    def read_work_mode(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__work_mode_command_full
+        address = self.__SDO_object
+
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+
+        final_command = (bytes_code, command_byte_second, command_byte_first, 0)
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(final_command),
+            data=final_command,
+            can_id=address + servo_id,
+        )
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+
+    def send_goto_home_mode(self, servo_id: int, value: int) -> canalystii.Message:  
+        command_code_from_documentation = self.__goto_home_mode_command_full
+        address = self.__SDO_object
+        is_read = False
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        value = round(value)
+
+        bytes_code = self.__get_bytes_code(num_of_bytes=num_of_bytes_for_command)
+        value = self.__convert_to_bytes(
+            value=value, num_of_bytes=num_of_bytes_for_command
+        )
+
+        list_of_bytes = self.__init_list_of_bytes(4 + num_of_bytes_for_command)
+        list_of_bytes = (bytes_code, command_byte_second, command_byte_first, 0) + value
+
+        output_command = canalystii.Message(
+            remote=False,
+            extended=False,
+            data_len=len(list_of_bytes),
+            data=list_of_bytes,
+            can_id=address + servo_id,
+        )
+
+        # print("send mode --> ", output_command)
+
+        command_id = command_byte_first, command_byte_second
+        self.device.send(
+            message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
+        )
+    
+    def read_goto_home_mode(self, servo_id: int) -> canalystii.Message:
+        command_code_from_documentation = self.__goto_home_mode_command_full
+        address = self.__SDO_object
+
+        is_read = True
+
+        num_of_bytes_for_command = (
+            ((command_code_from_documentation % 100) // 10 * 16)
+            + ((command_code_from_documentation % 100) % 10 * 1)
+        ) // 8
+        command_byte_first_hex = command_code_from_documentation // 1000000
+        command_byte_first = (
+            command_byte_first_hex % 10 * 1 + command_byte_first_hex // 10 * 16
+        )
+
+        command_byte_second_hex = (
+            command_code_from_documentation // 10000 * 10000
+            - command_code_from_documentation // 1000000 * 1000000
+        ) // 10000
+        command_byte_second = (
+            command_byte_second_hex % 10 * 1 + command_byte_second_hex // 10 * 16
+        )
+
+        bytes_code = self.__get_bytes_code(
+            num_of_bytes=num_of_bytes_for_command, is_read=1
+        )
+
         final_command = (bytes_code, command_byte_second, command_byte_first, 0)
 
         output_command = canalystii.Message(
