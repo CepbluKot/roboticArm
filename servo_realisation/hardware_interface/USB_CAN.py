@@ -47,8 +47,12 @@ class MessagesBuffer:
                     if is_read in self.messages_buffer[command_id][servo_id]:
                         msg = self.messages_buffer[command_id][servo_id][is_read]
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
-                        # print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
+                        
+                        if command_id == 'interpolation' or command_id[1] == 0x81 or command_id[1] == 0x83:
+                            print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
     
+    
+
     def check_is_empty(self):
         with self.lock:
             is_empty = True
@@ -86,14 +90,14 @@ class USB_CAN(HardwareInterface):
             self.sent_messages_buffer_lock
         )  # command_id: {servoid: message}
 
-        self.read_thread = threading.Thread(target=self.__read_thread)
+        self.read_thread = threading.Thread(target=self.__read_thread, daemon=True)
         if not self.read_thread.is_alive():
             try:
                 self.read_thread.start()
             except:
                 print("start read thread - error")
 
-        self.send_thread = threading.Thread(target=self.__send_thread)
+        self.send_thread = threading.Thread(target=self.__send_thread, daemon=True)
         if not self.send_thread.is_alive():
             try:
                 self.send_thread.start()
@@ -109,23 +113,26 @@ class USB_CAN(HardwareInterface):
 
     def __read_thread(self):
         while self.read_thread.is_alive():
-            # try:
-            recv = self.device.receive(self.bus_id)
+            # print('read thread alive', time.time())
+            try:
+                recv = self.device.receive(self.bus_id)
+                if recv:
+                    for message in recv:
 
-            if recv:
-                for message in recv:
+                        print("recieved --> ", message)
+                        parsed = self.on_recieve(message)
 
-                    # print("recieved --> ", message)
-                    parsed = self.on_recieve(message)
-                    self.__queue_recieved_msg_handler(parsed)
+                        
+                        self.__queue_recieved_msg_handler(parsed)
 
-        # except:
-        # print("read thread - error")
-        # self.read_thread.join()
-        # return False
+            except:
+                print("read thread - error")
+                self.read_thread.join()
+                return False
 
     def __send_thread(self):
         while self.send_thread.is_alive():
+            # print('send thread alive', time.time())
             sent_messages_buffer_copy = self.sent_messages_buffer.get()
 
             if not sent_messages_buffer_copy:
@@ -149,18 +156,18 @@ class USB_CAN(HardwareInterface):
                             )
                             # print("sent again --> ", self.sent_messages_buffer[command_id][servo_id].message)
 
-    # def __debug_thr(self):
-    #     while True:
-    #         # time.sleep(0.2)
-    #         # print('---------------')
+    def __debug_thr(self):
+        while True:
+            time.sleep(0.01)
+            print('---------------')
 
-    #         # buffa = self.sent_messages_buffer.get()
-    #         # for code in buffa:
-    #         #     for com_id in buffa[code]:
-    #         #         print(buffa[code][com_id])
-        
+            buffa = self.sent_messages_buffer.get()
+            for code in buffa:
+                for com_id in buffa[code]:
+                    for is_read in buffa[code][com_id]:
+                        print("comm_id", code, "servo_id", com_id, 'is_read', is_read, "|", buffa[code][com_id][is_read].message)
             
-    #         pass
+            pass
 
     def __queue_send_msg(self, msg: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
         msg = QueueMessage(message=msg, last_send_time=time.time())
@@ -171,6 +178,8 @@ class USB_CAN(HardwareInterface):
             command_id=msg.command_data, servo_id=msg.servo_id, is_read=msg.is_read
         )
         
+    def get_buffer(self):
+        return self.sent_messages_buffer.get()
 
     def open_connection(self):
         try:
@@ -188,12 +197,12 @@ class USB_CAN(HardwareInterface):
         return self.device.get_can_status()
 
     def send(self, message: canalystii.Message, command_id: int, servo_id: int, is_read: bool):
-        try:
+        # try:
             # print('added to buffer:', 'servo_id', servo_id,  'command_id', command_id, )
             self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id, is_read=is_read)
             return self.device.send(channel=self.bus_id, messages=message)
             # pass
-        except:
+        # except:
             print("send - error")
             return False
 
