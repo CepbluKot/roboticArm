@@ -35,7 +35,7 @@ def start_ride_call(tree: Treeview):
 
             speeds, accelerations = {}, {}
 
-            robot.set_target_pos(positions)
+            robot.send_target_pos(positions)
             
             target_positions = positions
             # speeds, accelerations = syncronise(movement_time=2, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
@@ -58,8 +58,8 @@ def start_ride_call(tree: Treeview):
                 # if servo_id == 4:
                 #     continue
                 
-                robot.set_axis_accel(servo_id, accelerations[servo_id] * 10)
-                robot.set_axis_speed(servo_id, speeds[servo_id] * 10)
+                robot.send_axis_accel(servo_id, accelerations[servo_id] * 10)
+                robot.send_axis_speed(servo_id, speeds[servo_id] * 10)
 
             prev_row = curr_row
             

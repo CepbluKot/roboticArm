@@ -1,5 +1,7 @@
 import abc
 import canalystii
+import typing
+from servo_realisation.hardware_interface.dataclasses import QueueMessage
 
 
 class HardwareInterface(abc.ABC):
@@ -27,6 +29,10 @@ class HardwareInterface(abc.ABC):
     def check_is_device_buffer_empty(self) -> bool:
         raise NotImplemented
 
+    @abc.abstractmethod
+    def get_device_buffer(self) -> typing.Dict[int, typing.Dict[int, typing.Dict[bool, QueueMessage]]]:
+        raise NotImplemented
+    
     @abc.abstractmethod
     def close_connection(self):
         raise NotImplemented

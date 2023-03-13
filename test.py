@@ -31,7 +31,7 @@ def interpol_call_for_thread(axis_set_angle_data: typing.Dict[int, int]):
         axis_target_pos = axis_set_angle_data[axis_id]
         target_positions[axis_id] = 32768*50/360*round(float(axis_target_pos))
         
-    robot.set_target_pos(target_positions)
+    robot.send_target_pos(target_positions)
  
     # speeds, accelerations = syncronise(movement_time=4, current_positions=current_positions, target_positions=target_positions, max_acceleration=max_accel, max_speed=max_speed)
     speeds, accelerations = syncronise_2(current_positions=current_positions, target_positions=target_positions, max_speed=max_speed)
@@ -45,8 +45,8 @@ def interpol_call_for_thread(axis_set_angle_data: typing.Dict[int, int]):
         return None
 
     for servo_id in accelerations:
-        robot.set_axis_accel(servo_id, accelerations[servo_id])
-        robot.set_axis_speed(servo_id, speeds[servo_id])
+        robot.send_axis_accel(servo_id, accelerations[servo_id])
+        robot.send_axis_speed(servo_id, speeds[servo_id])
     
     while not check_is_buffer_empty_filtered(hardware_interface.get_buffer()):
         pass

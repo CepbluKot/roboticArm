@@ -218,6 +218,10 @@ class CanOpen301(ProtocolInterface):
     def check_is_buffer_empty(self):
         return self.device.check_is_device_buffer_empty()
 
+    def get_buffer(self):
+        return self.device.get_device_buffer()
+
+
     def send_speed(self, servo_id: int, value: int) -> canalystii.Message:
         
         # value -  в 16 формат с инверсией байт
@@ -502,7 +506,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def read_accelearation(self, servo_id: int) -> canalystii.Message:
+    def read_acceleration(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__accel_command_full
         address = self.__SDO_object
         is_read = True

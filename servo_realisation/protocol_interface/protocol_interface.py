@@ -39,7 +39,7 @@ class ProtocolInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
-    def read_accelearation(self, servo_id: int) -> canalystii.Message:
+    def read_acceleration(self, servo_id: int) -> canalystii.Message:
         raise NotImplemented
 
     @abc.abstractmethod
@@ -54,6 +54,10 @@ class ProtocolInterface(abc.ABC):
     def check_is_buffer_empty(self) -> bool:
         raise NotImplemented
 
+    @abc.abstractmethod
+    def get_buffer(self):
+        raise NotImplemented
+    
     @abc.abstractmethod
     def read_save(self, servo_id: int) -> canalystii.Message:
         raise NotImplemented

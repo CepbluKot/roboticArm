@@ -4,14 +4,8 @@ import typing
 import time
 import copy
 from servo_realisation.hardware_interface.hardware_interface import HardwareInterface
+from servo_realisation.hardware_interface.dataclasses import QueueMessage
 from servo_realisation.protocol_interface.CanOpen301 import ReceievedMessage
-
-
-class QueueMessage:
-    def __init__(self, message: canalystii.Message, last_send_time: float) -> None:
-        self.message = message
-        self.attempts = 0
-        self.last_send_time = last_send_time
 
 
 class MessagesBuffer:
@@ -50,7 +44,6 @@ class MessagesBuffer:
                         
                         if command_id == 'interpolation' or command_id[1] == 0x81 or command_id[1] == 0x83:
                             print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
-    
     
 
     def check_is_empty(self):
@@ -221,6 +214,9 @@ class USB_CAN(HardwareInterface):
 
     def check_is_device_buffer_empty(self):
         return self.sent_messages_buffer.check_is_empty()
+
+    def get_device_buffer(self):
+        return self.sent_messages_buffer.get()
 
     def close_connection(self):
         try:

@@ -4,12 +4,12 @@ from gui.config_tab.storages.output import config_calls_repo
 from servo_realisation.output import robot
 
 
-def congfig_tab(frame):
+def config_tab(frame):
     param_select = StringVar()
 
     params_calls = {
         'save settings': robot.save_settings, 
-        'set zero pos': robot.set_zero_pos,
+        'set zero pos': robot.send_zero_pos,
         'enable modbus': robot.send_enable_modbus,
         'disable modbus': robot.send_disable_modbus,
         'enable output': robot.send_enable_output,
