@@ -103,17 +103,17 @@ class ServoMotorAliexpress:
     
     #     return curr_servo_buffer
 
-    def check_are_move_commands_sent(self) -> bool:
+    def move_commands_sent(self) -> bool:
         command_ids_to_check = [(96, 129), (96, 131), "interpolation"]
         servo_id = self.id
         buffer = self.protocol.get_buffer()
 
         if buffer:
             for command_id in buffer:
-                if buffer[command_id]:
-                    if buffer[command_id][servo_id]:
+                if command_id in buffer:
+                    if servo_id in buffer[command_id]:
                         for is_read in buffer[command_id][servo_id]:
-                            if not is_read and command_id in command_ids_to_check and buffer[command_id][servo_id][is_read]:
+                            if is_read in buffer[command_id][servo_id] and not is_read and command_id in command_ids_to_check:
                                 return False
 
         return True

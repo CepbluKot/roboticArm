@@ -2,6 +2,7 @@ import time, threading
 from tkinter.ttk import  Treeview
 from servo_realisation.output import robot, current_positions
 from control_system.axis_sync import syncronise_2
+from servo_realisation.output import robot
 
 
 def start_ride_call(tree: Treeview):
@@ -26,12 +27,13 @@ def start_ride_call(tree: Treeview):
                 if axis_val == 'None':
                     positions[axis_id] = -1
                 else:
-                    positions[axis_id] = 32768*50/360*float(axis_val)
+                    pulses_per_rev = robot.servos[axis_id].pulses_per_revolution
+                    gearbox_val = robot.servos[axis_id].gearbox_value
+                    positions[axis_id] = pulses_per_rev*gearbox_val/360*float(axis_val)
                 axis_id += 1
 
-      
-            
-            max_speed = 50    
+
+            max_speed = 100    
 
             speeds, accelerations = {}, {}
 
@@ -55,11 +57,10 @@ def start_ride_call(tree: Treeview):
                 return None
             
             for servo_id in accelerations:
-                # if servo_id == 4:
-                #     continue
+        
                 
-                robot.send_axis_accel(servo_id, accelerations[servo_id] * 10)
-                robot.send_axis_speed(servo_id, speeds[servo_id] * 10)
+                robot.send_axis_accel(servo_id, accelerations[servo_id] )
+                robot.send_axis_speed(servo_id, speeds[servo_id] )
 
             prev_row = curr_row
             
@@ -73,4 +74,3 @@ def start_ride_call(tree: Treeview):
 
     test_thr = threading.Thread(target=smth)
     test_thr.start()
-    
