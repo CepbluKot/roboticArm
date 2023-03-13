@@ -119,7 +119,7 @@ class USB_CAN(HardwareInterface):
                 if recv:
                     for message in recv:
 
-                        print("recieved --> ", message)
+                        # print("recieved --> ", message)
                         parsed = self.on_recieve(message)
 
                         

@@ -31,7 +31,7 @@ def start_ride_call(tree: Treeview):
 
       
             
-            max_speed = 100    
+            max_speed = 50    
 
             speeds, accelerations = {}, {}
 
