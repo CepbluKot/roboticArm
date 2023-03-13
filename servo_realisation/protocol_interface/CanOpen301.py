@@ -862,7 +862,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 ############ new
-    def send_enable_modbus(self, servo_id: int, value: bool) -> canalystii.Message:
+    def send_modbus_status(self, servo_id: int, value: bool) -> canalystii.Message:
         command_code_from_documentation = self.__enable_modbus_command_full
         address = self.__SDO_object
         is_read = False
@@ -907,7 +907,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def read_enable_modbus(self, servo_id: int) -> canalystii.Message:
+    def read_modbus_status(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__enable_modbus_command_full
         address = self.__SDO_object
         is_read = True
@@ -1510,7 +1510,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def send_transfer_electronic_denominator(self, servo_id: int, value: int) -> canalystii.Message:
+    def send_electrical_transmission_denominator(self, servo_id: int, value: int) -> canalystii.Message:
         command_code_from_documentation = self.__transfer_electronic_denominator_command_full
         address = self.__SDO_object
         is_read = False
@@ -1548,7 +1548,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def read_transfer_electronic_denominator(self, servo_id: int) -> canalystii.Message:
+    def read_electrical_transmission_denominator(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__transfer_electronic_denominator_command_full
         address = self.__SDO_object
         is_read = True
@@ -2019,7 +2019,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def send_target_location_cache(self, servo_id: int, value: int) -> canalystii.Message:
+    def send_target_position_cache(self, servo_id: int, value: int) -> canalystii.Message:
         command_code_from_documentation = self.__target_location_cache_command_full
         address = self.__SDO_object
         is_read = False
@@ -2057,7 +2057,7 @@ class CanOpen301(ProtocolInterface):
             message=output_command, command_id=command_id, servo_id=servo_id, is_read=is_read
         )
 
-    def read_target_location_cache(self, servo_id: int) -> canalystii.Message:
+    def read_target_position_cache(self, servo_id: int) -> canalystii.Message:
         command_code_from_documentation = self.__target_location_cache_command_full
         address = self.__SDO_object
         is_read = True

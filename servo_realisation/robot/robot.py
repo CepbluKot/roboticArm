@@ -123,6 +123,72 @@ class Robot:
     def read_target_pos(self, servo_id: int):
         return self.__read_target_pos(servo_id=servo_id)
 
+    def send_enable_modbus(self, servo_id: int):
+        self.protocol_interface.send_modbus_status(servo_id=servo_id, value=1)
+
+    def send_disable_modbus(self, servo_id: int):
+        self.protocol_interface.send_modbus_status(servo_id=servo_id, value=0)
+
+    def send_enable_output(self, servo_id: int):
+        self.protocol_interface.send_driver_output_permission(servo_id=servo_id, value=1)
+
+    def send_disable_output(self, servo_id: int):
+        self.protocol_interface.send_driver_output_permission(servo_id=servo_id, value=0)
+
+    def send_weak_magnet_angle(self, servo_id: int, value: int):
+        self.protocol_interface.send_weak_magnet_angle(servo_id=servo_id, value=value)
+
+    def send_speed_loop_scale_coefficient(self, servo_id: int, value: int):
+        self.protocol_interface.send_speed_loop_scale_coefficient(servo_id=servo_id, value=value)
+
+    def send_position_loop_scale_coefficient(self, servo_id: int, value: int):
+        self.protocol_interface.send_position_loop_scale_coefficient(servo_id=servo_id, value=value)
+
+    def send_polarity_dir(self, servo_id: int, value: int):
+        self.protocol_interface.send_polarity_dir(servo_id=servo_id, value=value)
+
+    def send_electronic_gear_molecules(self, servo_id: int, value: int):
+        self.protocol_interface.send_electronic_gear_molecules(servo_id=servo_id, value=value)
+
+    def send_transfer_electronic_denominator(self, servo_id: int, value: int):
+        self.protocol_interface.send_electrical_transmission_denominator(servo_id=servo_id, value=value)
+
+    def send_incremental_position(self, servo_id: int, value: int):
+        self.protocol_interface.send_incremental_position(servo_id=servo_id, value=value)
+
+    def send_servo_address(self, servo_id: int, value: int):
+        self.protocol_interface.send_servo_address(servo_id=servo_id, value=value)
+
+    def send_stationary_max_power(self, servo_id: int, value: int):
+        self.protocol_interface.send_stationary_max_power(servo_id=servo_id, value=value)
+
+    def send_specials(self, servo_id: int, value: int):
+        self.protocol_interface.send_specials(servo_id=servo_id, value=value)
+
+    def send_target_location_cache(self, servo_id: int, value: int):
+        self.protocol_interface.send_target_position_cache(servo_id=servo_id, value=value)
+
+    def send_speed_mode_speed(self, servo_id: int, value: int):
+        self.protocol_interface.send_speed_mode_speed(servo_id=servo_id, value=value)
+
+    def send_can_connection_sync_speed_word(self, servo_id: int, value: int):
+        self.protocol_interface.send_can_connection_sync_speed_word(servo_id=servo_id, value=value)
+
+    def send_max_current(self, servo_id: int, value: int):
+        self.protocol_interface.send_max_current(servo_id=servo_id, value=value)
+
+    def send_control_words(self, servo_id: int, value: int):
+        self.protocol_interface.send_control_words(servo_id=servo_id, value=value)
+
+    def send_status_word(self, servo_id: int, value: int):
+        self.protocol_interface.send_status_word(servo_id=servo_id, value=value)
+
+    def send_work_mode(self, servo_id: int, value: int):
+        self.protocol_interface.send_work_mode(servo_id=servo_id, value=value)
+
+    def send_goto_home_mode(self, servo_id: int, value: int):
+        self.protocol_interface.send_goto_home_mode(servo_id=servo_id, value=value)
+
     def params_checker(self):
         while True:
             time.sleep(0.01)

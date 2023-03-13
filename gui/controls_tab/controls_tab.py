@@ -58,24 +58,7 @@ def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos
         return speed_inp, accel_inp, sync_inp
 
 
-    def robot_curr_params(frame):
-        speed_lbl = Label(frame, text='speed', background='white').grid(padx=30, pady=10, row=1, column=8+1, )
-        speed_val_lbl = Label(frame, text=str('speed'))
-        
-        speed_val_lbl.grid(row=1, column=9+1, padx=10, pady=10)
-
-        accel_lbl = Label(frame, text='accel', background='white' ).grid(padx=30, pady=10, row=2, column=8+1, )
-        accel_val_lbl = Label(frame, text=str('accel'))
-        
-        accel_val_lbl.grid(row=2, column=9+1, padx=10, pady=10)
-
-        sync_lbl = Label(frame, text='sync', background='white' ).grid(padx=30, pady=10, row=3, column=8+1, )
-        sync_val_lbl = Label(frame, text=str('sync'))
-        
-        sync_val_lbl.grid(row=3, column=9+1, padx=10, pady=10)
-
-        return speed_val_lbl, accel_val_lbl, sync_val_lbl
-
+ 
 
     eng_control(1, frame, 1)
     eng_control(5, frame, 2)
@@ -85,27 +68,27 @@ def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos
     eng_control(30, frame, 6)
 
     
-    curr_speed_lbl, curr_accel_lbl, curr_sync_lbl = robot_curr_params(frame)
+
 
     def set_speed():
         value = speed_inp.get()
         if value:
             set_speed_call(value)
-            curr_speed_lbl.config(text=str(value))
+         
 
 
     def set_accel():
         value = accel_inp.get()
         if value:
             set_accel_call(value)
-            curr_accel_lbl.config(text=str(value))
+          
 
 
     def set_sync():
         value = sync_inp.get()
         if value:
             set_sync_call(value)
-            curr_sync_lbl.config(text=str(value))
+         
 
 
 
@@ -116,6 +99,3 @@ def controls_tab(frame, interpolation_call: typing.Callable, get_axis_target_pos
 
     interpolation_button.grid(row=33, column=2, padx=10, pady=10)
 
-    obj = Combobox(frame, )
-    obj.grid(column=0, row=0)
-    obj['values'] = (1,2,3,4)
