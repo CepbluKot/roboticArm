@@ -29,8 +29,8 @@ class Robot:
             for servo_id in range(1, DoF + 1):
                 self.servos[servo_id] = ServoMotor(servo_id)
 
-        # params_check_thr = threading.Thread(target=self.params_checker)
-        # params_check_thr.start()
+        params_check_thr = threading.Thread(target=self.params_checker, daemon=True)
+        params_check_thr.start()
 
 
     def __modify_acceleration(self, servo_id: int, value: int):
@@ -191,7 +191,7 @@ class Robot:
 
     def params_checker(self):
         while True:
-            time.sleep(0.01)
+            time.sleep(0.1)
             for axis_id in range(1,7):
                 pass
                 # self.protocol_interface.read_speed(axis_id)

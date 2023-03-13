@@ -75,7 +75,11 @@ class ProtocolInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
-    def read_speed_loop_integration_time(self, servo_id: int) -> canalystii.Message:
+    def send_speed_loop_integration_time(self, servo_id: int, value: int) -> canalystii.Message: # !!!
+        raise NotImplemented
+    
+    @abc.abstractmethod
+    def read_speed_loop_integration_time(self, servo_id: int) -> canalystii.Message: # !!!
         raise NotImplemented
 
     @abc.abstractmethod
@@ -103,15 +107,19 @@ class ProtocolInterface(abc.ABC):
         raise NotImplemented
 
     @abc.abstractmethod
-    def send_speed_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message:
+    def send_speed_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message: # !!!
         raise NotImplemented
 
     @abc.abstractmethod
-    def read_speed_loop_scale_coefficient(self, servo_id: int) -> canalystii.Message:
+    def read_speed_loop_scale_coefficient(self, servo_id: int) -> canalystii.Message: # !!!
         raise NotImplemented
 
     @abc.abstractmethod
-    def send_position_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message:
+    def send_position_loop_scale_coefficient(self, servo_id: int, value: int) -> canalystii.Message: # !!!
+        raise NotImplemented
+
+    @abc.abstractmethod
+    def read_position_loop_scale_coefficient(self, servo_id: int) -> canalystii.Message: # !!!
         raise NotImplemented
 
     @abc.abstractmethod
@@ -190,6 +198,10 @@ class ProtocolInterface(abc.ABC):
     def send_speed_mode_speed(self, servo_id: int, value: int) -> canalystii.Message:
         raise NotImplemented
     
+    @abc.abstractmethod
+    def read_speed_mode_speed(self, servo_id: int, value: int) -> canalystii.Message:
+        raise NotImplemented
+
     @abc.abstractmethod
     def send_can_connection_sync_speed_word(self, servo_id: int, value: int) -> canalystii.Message:
         raise NotImplemented

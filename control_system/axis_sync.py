@@ -63,7 +63,7 @@ def syncronise_2(current_positions: Dict[int, int], target_positions: Dict[int, 
         distance = abs(current_positions[servo_id] - target_positions[servo_id]) 
         distances[servo_id] = distance
 
-    # print('distances',distances)
+    print('distances',distances)
 
     if distances:
 
