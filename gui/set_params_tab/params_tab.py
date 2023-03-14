@@ -1,7 +1,6 @@
 import typing
 from tkinter import *
-from gui.config_tab.storages.output import config_calls_repo
-from servo_realisation.output import robot
+from servo_realization.output import robot
 
 
 def params_tab(frame):

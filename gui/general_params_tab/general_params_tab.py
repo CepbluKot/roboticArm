@@ -20,7 +20,7 @@ def general_params_tab(frame):
         param_field(param_name='accel', row=axis_id, column=4, frame=frame, axis_id=axis_id, param_value=-1)
         param_field(param_name='mode', row=axis_id, column=6, frame=frame, axis_id=axis_id, param_value=-1)
         
-        param_field(param_name='positon', row=axis_id, column=8, frame=frame, axis_id=axis_id, param_value=-1)
+        param_field(param_name='position', row=axis_id, column=8, frame=frame, axis_id=axis_id, param_value=-1)
         param_field(param_name='target position', row=axis_id, column=10, frame=frame, axis_id=axis_id, param_value=-1)
 
         param_field(param_name='error code', row=axis_id, column=12, frame=frame, axis_id=axis_id, param_value=-1)

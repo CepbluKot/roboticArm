@@ -1,7 +1,6 @@
 import typing
 from tkinter import *
-from gui.config_tab.storages.output import config_calls_repo
-from servo_realisation.output import robot
+from servo_realization.output import robot
 
 
 def config_tab(frame):
@@ -15,11 +14,10 @@ def config_tab(frame):
         'enable output': robot.send_enable_output,
         'disable output': robot.send_disable_output,
     }
-    
+
     def param_button(param_name: str,  frame, row: int, column: int, call: typing.Callable):
         name_field = Button(master=frame, text=param_name, command=call)
         name_field.grid(row=row, column=column, padx=10, pady=10)
-
 
     def axis_params(axis_name: str,  frame, axis_id: int):
         axis_name = Label(master=frame, text=axis_name, background='white')
@@ -42,6 +40,5 @@ def config_tab(frame):
 
         curr_row += 1
 
-    
     for axis_id in range(1,7):
         axis_params(f'axis {axis_id}', frame, axis_id)
