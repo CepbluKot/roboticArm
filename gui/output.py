@@ -10,7 +10,6 @@ from gui.set_params_tab.params_tab import params_tab
 from servo_realization.output import robot
 
 
-speed = 30
 axis_set_angle_slider_data = {}
 
 def init_gui(move_to_point_call: typing.Callable, get_axis_target_pos_value_funcs_dict: typing.Dict, set_speed_call: typing.Callable, points_ride_call: typing.Callable[[Treeview], None]):

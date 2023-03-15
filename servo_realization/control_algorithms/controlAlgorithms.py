@@ -141,6 +141,7 @@ class ControlAlgorithms:
 
     def move_to_point(self, max_speed: int, target_angles: Dict[int, int]):
         def move_to_point_for_thread():
+            print('move to point speed', max_speed)
             current_positions = {}
             target_positions = {}
             speeds, accelerations = {}, {}

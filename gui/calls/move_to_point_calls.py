@@ -2,7 +2,7 @@ from threading import Thread
 from time import sleep
 from tkinter.ttk import  Treeview
 from typing import Dict
-from gui.output import axis_set_angle_slider_data, speed
+from gui.output import axis_set_angle_slider_data
 from servo_realization.output import control_algorithms, robot
 
 
@@ -11,7 +11,7 @@ def move_to_point_call():
     for axis_id in axis_set_angle_slider_data:
         target_angles[axis_id] = axis_set_angle_slider_data[axis_id]()
 
-    control_algorithms.move_to_point(max_speed=speed, target_angles=target_angles)
+    control_algorithms.move_to_point(max_speed=robot.speed, target_angles=target_angles)
 
 
 def move_multiple_points(tree: Treeview):
@@ -47,7 +47,7 @@ def move_multiple_points(tree: Treeview):
  
             # send command to robot
             
-            control_algorithms.move_to_point(max_speed=speed, target_angles=current_target_positions)
+            control_algorithms.move_to_point(max_speed=robot.speed, target_angles=current_target_positions)
             sleep(6)
 
         if prev_row:

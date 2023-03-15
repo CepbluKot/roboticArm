@@ -108,7 +108,7 @@ class ServoMotorAliexpress:
         servo_id = self.id
         buffer = self.protocol.get_buffer()
 
-        print('\n',buffer)
+        # print('\n',buffer)
 
         if buffer:
             for command_id in buffer:

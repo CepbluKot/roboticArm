@@ -3,9 +3,12 @@ import threading
 import typing
 import time
 import copy
+
 from servo_realization.hardware_interface.hardware_interface import HardwareInterface
 from servo_realization.hardware_interface.dataclasses import QueueMessage
-from servo_realization.protocol_interface.CanOpen301 import ReceievedMessage
+from servo_realization.protocol_interface.CanOpen301 import ReceivedMessage
+
+from logr import logging
 
 
 class MessagesBuffer:
@@ -42,9 +45,9 @@ class MessagesBuffer:
                         msg = self.messages_buffer[command_id][servo_id][is_read]
                         self.messages_buffer[command_id][servo_id].pop(is_read, None)
                         
-                        if command_id == 'interpolation' or command_id[1] == 0x81 or command_id[1] == 0x83:
-                            print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
-    
+                        # if command_id == 'interpolation' or command_id[1] == 0x81 or command_id[1] == 0x83:
+                            # print('removed from buffer:', 'servo_id', servo_id,  'command_id', command_id, )
+                            
 
     def check_is_empty(self):
         with self.lock:
@@ -66,7 +69,7 @@ class USB_CAN(HardwareInterface):
         self,
         bus_id: int,
         bitrate: int,
-        on_recieve: typing.Callable[[canalystii.protocol.Message], ReceievedMessage],
+        on_recieve: typing.Callable[[canalystii.protocol.Message], ReceivedMessage],
     ) -> None:
         self.bus_id = bus_id
         self.on_recieve = on_recieve
@@ -166,7 +169,7 @@ class USB_CAN(HardwareInterface):
         msg = QueueMessage(message=msg, last_send_time=time.time())
         self.sent_messages_buffer.set(command_id=command_id, servo_id=servo_id, msg=msg, is_read=is_read)
 
-    def __queue_recieved_msg_handler(self, msg: ReceievedMessage):
+    def __queue_recieved_msg_handler(self, msg: ReceivedMessage):
         self.sent_messages_buffer.delete(
             command_id=msg.command_data, servo_id=msg.servo_id, is_read=msg.is_read
         )
@@ -193,6 +196,7 @@ class USB_CAN(HardwareInterface):
         # try:
             # print('added to buffer:', 'servo_id', servo_id,  'command_id', command_id, )
             self.__queue_send_msg(msg=message, command_id=command_id, servo_id=servo_id, is_read=is_read)
+            logging.debug("SENT MSG|    servo " + str(servo_id) + " command " + str(command_id) + " is_read " + str(is_read))
             return self.device.send(channel=self.bus_id, messages=message)
             # pass
         # except:

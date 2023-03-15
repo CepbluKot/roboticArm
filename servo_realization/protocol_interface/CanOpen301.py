@@ -9,7 +9,7 @@ from servo_realization.hardware_interface.hardware_interface import HardwareInte
 # to-do : make interface
 
 
-class ReceievedMessage:
+class ReceivedMessage:
     def __init__(self, id: str, ts: str, data: str) -> None:
         self.id = id
         self.ts = ts
@@ -66,15 +66,15 @@ class CanOpen301(ProtocolInterface):
     def __init__(
         self,
         hardware_interface: HardwareInterface,
-        on_read_speed: typing.Callable[[ReceievedMessage], None],
-        on_read_accel: typing.Callable[[ReceievedMessage], None],
-        on_read_mode: typing.Callable[[ReceievedMessage], None],
-        on_read_pos: typing.Callable[[ReceievedMessage], None],
-        on_read_target_pos: typing.Callable[[ReceievedMessage], None],
-        on_read_error_check: typing.Callable[[ReceievedMessage], None],
-        on_voltage_check: typing.Callable[[ReceievedMessage], None],
-        on_temperature_check: typing.Callable[[ReceievedMessage], None],
-        on_current_check: typing.Callable[[ReceievedMessage], None],
+        on_read_speed: typing.Callable[[ReceivedMessage], None],
+        on_read_accel: typing.Callable[[ReceivedMessage], None],
+        on_read_mode: typing.Callable[[ReceivedMessage], None],
+        on_read_pos: typing.Callable[[ReceivedMessage], None],
+        on_read_target_pos: typing.Callable[[ReceivedMessage], None],
+        on_read_error_check: typing.Callable[[ReceivedMessage], None],
+        on_voltage_check: typing.Callable[[ReceivedMessage], None],
+        on_temperature_check: typing.Callable[[ReceivedMessage], None],
+        on_current_check: typing.Callable[[ReceivedMessage], None],
         
     ) -> None:
 
@@ -111,7 +111,7 @@ class CanOpen301(ProtocolInterface):
         self.__control_words_command_short = self.__get_short_command(self.__specials_command_full)
         
         self.commands_parse_storage: typing.Dict[
-            str, typing.Callable[[ReceievedMessage], None]
+            str, typing.Callable[[ReceivedMessage], None]
         ] = {
             self.__speed_command_short: on_read_speed,
             self.__accel_command_short: on_read_accel,
@@ -139,13 +139,13 @@ class CanOpen301(ProtocolInterface):
         second_byte_hex_to_dec = second_byte // 10 * 16 + second_byte % 10
         return first_byte_hex_to_dec, second_byte_hex_to_dec
 
-    def parse_recieve(self, msg: canalystii.Message) -> ReceievedMessage:
+    def parse_recieve(self, msg: canalystii.Message) -> ReceivedMessage:
         id = hex(msg.can_id)
         servo_id = int(id[-1])
         ts = msg.timestamp
         data = msg.data
 
-        recieved_command = ReceievedMessage(id=id, ts=ts, data=data)
+        recieved_command = ReceivedMessage(id=id, ts=ts, data=data)
         recieved_command.servo_id = servo_id
 
         num_of_bytes_to_read = hex(bytes(data)[0])

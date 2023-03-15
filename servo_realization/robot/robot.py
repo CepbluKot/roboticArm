@@ -11,7 +11,8 @@ class Robot:
         servos: typing.List[ServoMotorAliexpress]
     ) -> None:
         self.DoF = DoF
-
+        self.speed = 30
+        
         servos_to_dict = {}
         for servo in servos:
             servos_to_dict[servo.id] = servo
@@ -46,7 +47,7 @@ class Robot:
             self.servos[servo_id].send_speed(value=value)
 
     def send_axis_speed(self, axis_id: int, value: int):
-        self.servos[axis_id].send_mode(value=value)
+        self.servos[axis_id].send_speed(value=value)
 
     def send_all_axis_acceleration(self, value: int):
         for servo_id in self.servos:
@@ -149,11 +150,11 @@ class Robot:
             time.sleep(0.1)
             for axis_id in self.servos:
                 pass
-                # self.servos[axis_id].read_speed()
-                # self.servos[axis_id].read_acceleration()
-                # self.protocol_interface.read_current(axis_id)
+                self.servos[axis_id].read_speed()
+                self.servos[axis_id].read_acceleration()
+                self.servos[axis_id].read_current()
                 self.servos[axis_id].read_position()
-                # self.protocol_interface.read_mode(axis_id)
-                # self.protocol_interface.read_error_checker(axis_id)
-                # self.protocol_interface.read_temperature(axis_id)
-                # self.protocol_interface.read_voltage(axis_id)
+                self.servos[axis_id].read_mode()
+                self.servos[axis_id].read_error_checker()
+                self.servos[axis_id].read_temperature()
+                self.servos[axis_id].read_voltage()
