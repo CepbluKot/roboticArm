@@ -1,12 +1,8 @@
-from servo_realisation.output import robot
+from servo_realization.output import robot
 
 
 def set_speed_call(value):
-    robot.set_all_axis_speeds(float(value))
+    robot.speed = float(value)
 
-def set_accel_call(value):
-    robot.set_all_axis_acceleration(float(value))
-
-def set_sync_call(value):
-    # robot.set_speed(60)
-    pass
+    print('speed set', robot.speed)
+    robot.send_all_axis_speeds(float(value))
