@@ -68,6 +68,6 @@ axis_5 = ServoMotorAliexpress(id=5, pulses_per_revolution=32768, gearbox_value=5
 axis_6 = ServoMotorAliexpress(id=6, pulses_per_revolution=32768, gearbox_value=50, protocol=protocol)
 
 
-robot = Robot(5, servos=[axis_1, axis_2, axis_3, axis_4, axis_6])
+robot = Robot(5, servos=[axis_1, axis_2, axis_3, axis_4, axis_6, ])
 
 control_algorithms = ControlAlgorithms(robot_obj=robot)

@@ -140,3 +140,5 @@ def on_read_can_connection_sync_speed_word_gui_call(received_message: ReceivedMe
     widget =general_params_repo.get(received_message.servo_id, 'can_connection_sync_speed_word')
     if widget:
         widget.config(text=received_message.decoded_data)
+
+

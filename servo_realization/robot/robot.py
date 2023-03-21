@@ -170,8 +170,9 @@ class Robot:
                 self.servos[axis_id].read_incremental_position()
                 self.servos[axis_id].read_system_pwm_output()
                 self.servos[axis_id].read_save()
-
+                self.servos[axis_id].read_speed_control()
                 self.servos[axis_id].read_servo_address()
                 self.servos[axis_id].read_stationary_max_power()
                 self.servos[axis_id].read_can_connection_sync_speed_word()
-
+                self.servos[axis_id].read_modbus_status()
+                self.servos[axis_id].read_target_position_cache()

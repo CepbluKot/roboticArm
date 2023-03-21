@@ -1,10 +1,10 @@
 import canalystii, typing
-from servo_realization.protocol_interface.protocol_interface import ProtocolInterface
+from servo_realization.protocol_interface.CanOpen301 import CanOpen301
 from servo_realization.hardware_interface.USB_CAN import QueueMessage
 
 
 class ServoMotorAliexpress:
-    def __init__(self, id: int, pulses_per_revolution: int, gearbox_value: int, protocol: ProtocolInterface) -> None:
+    def __init__(self, id: int, pulses_per_revolution: int, gearbox_value: int, protocol: CanOpen301) -> None:
         self.id = id
         self.is_active = True
         self.current_pos = -1
@@ -279,3 +279,6 @@ class ServoMotorAliexpress:
     
     def read_goto_home_mode(self, ):
         self.protocol.read_goto_home_mode(servo_id=self.id)
+
+    def read_speed_control(self, ):
+        self.protocol.read_speed_control(servo_id=self.id)

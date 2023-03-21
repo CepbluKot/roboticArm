@@ -93,6 +93,7 @@ class CanOpen301(ProtocolInterface):
         on_read_stationary_max_power: typing.Callable[[ReceivedMessage], None],
         on_read_target_location_cache: typing.Callable[[ReceivedMessage], None],
         on_read_can_connection_sync_speed_word: typing.Callable[[ReceivedMessage], None],
+        
     ) -> None:
 
         self.__speed_command_short = self.__get_short_command(self.__speed_command_full)
