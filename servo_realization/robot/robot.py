@@ -158,3 +158,20 @@ class Robot:
                 self.servos[axis_id].read_error_checker()
                 self.servos[axis_id].read_temperature()
                 self.servos[axis_id].read_voltage()
+                
+                self.servos[axis_id].read_driver_output_permission()
+                self.servos[axis_id].read_weak_magnet_angle()
+                self.servos[axis_id].read_speed_loop_integration_time()
+                self.servos[axis_id].read_speed_loop_scale_coefficient()
+                self.servos[axis_id].read_position_loop_scale_coefficient()
+                self.servos[axis_id].read_polarity_dir()
+                self.servos[axis_id].read_electronic_gear_molecules()
+                self.servos[axis_id].read_electrical_transmission_denominator()
+                self.servos[axis_id].read_incremental_position()
+                self.servos[axis_id].read_system_pwm_output()
+                self.servos[axis_id].read_save()
+
+                self.servos[axis_id].read_servo_address()
+                self.servos[axis_id].read_stationary_max_power()
+                self.servos[axis_id].read_can_connection_sync_speed_word()
+

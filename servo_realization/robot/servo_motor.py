@@ -67,41 +67,6 @@ class ServoMotorAliexpress:
     def read_error_checker(self, ):
         self.protocol.read_error_checker(servo_id=self.id)
 
-    
-    # def check_is_buffer_empty(self) -> bool:
-    #     buffer = self.protocol.get_buffer()
-    #     servo_id = self.id
-
-    #     if buffer:
-    #         for command_id in buffer:
-    #             if buffer[command_id]:
-    #                 if buffer[command_id][servo_id]:
-    #                     return False
-        
-    #     return True
-    
-    # def get_buffer(self) -> typing.Dict[int, typing.Dict[int, typing.Dict[bool, QueueMessage]]]:
-    #     curr_servo_buffer = {}
-    #     servo_id = self.id
-    #     buffer = self.protocol.get_buffer()
-
-    #     if buffer:
-    #         for command_id in buffer:
-    #             if buffer[command_id]:
-    #                 if buffer[command_id][servo_id]:
-    #                     for is_read in buffer[command_id][servo_id]:
-    #                         if buffer[command_id][servo_id][is_read]:
-                                
-    #                             if not curr_servo_buffer[command_id]:
-    #                                 curr_servo_buffer[command_id] = {}
-                                
-    #                             if not curr_servo_buffer[command_id][servo_id]:
-    #                                 curr_servo_buffer[command_id][servo_id] = {}
-                                
-    #                             if not curr_servo_buffer[command_id][servo_id][is_read]:
-    #                                 curr_servo_buffer[command_id][servo_id][is_read] = buffer[command_id][servo_id][is_read]
-    
-    #     return curr_servo_buffer
 
     def are_move_commands_sent(self) -> bool:
         command_ids_to_check = [(96, 129), (96, 131), "interpolation"]

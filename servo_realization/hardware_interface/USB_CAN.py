@@ -8,7 +8,7 @@ from servo_realization.hardware_interface.hardware_interface import HardwareInte
 from servo_realization.hardware_interface.dataclasses import QueueMessage
 from servo_realization.protocol_interface.CanOpen301 import ReceivedMessage
 
-from logr import logging
+from logs.logr import logging
 
 
 class MessagesBuffer:
