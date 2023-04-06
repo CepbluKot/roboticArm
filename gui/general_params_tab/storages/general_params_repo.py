@@ -8,7 +8,9 @@ class GeneralParamsRepo:
     def set(self, axis_id: int, widget, value_name: str):
         if not axis_id in self.repo:
             self.repo[axis_id] = {}
-    
+
+        print('added ', value_name)
+
         self.repo[axis_id][value_name] = widget
 
     def getall(self):
@@ -16,7 +18,7 @@ class GeneralParamsRepo:
 
     def get(self, servo_id: int, value_name) -> Label:
         if servo_id in self.repo:
- 
-            return self.repo[servo_id][value_name]
+            if value_name in self.repo[servo_id]:
+                return self.repo[servo_id][value_name]
         else:
             return 0
