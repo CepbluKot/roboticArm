@@ -34,5 +34,5 @@ python3 main.py
 
 
 
-Для доступа к can-шине через usb используется такое устройство: https://aliexpress.ru/item/4000472388410.html?sku_id=10000001901640368
+Для доступа к can-шине через usb используется такое устройство: https://aliexpress.ru/item/4000472388410.html?sku_id=10000001901640368 <br />
 ![](https://ae04.alicdn.com/kf/H6d02e323135b46718cabcc51bcb68b0fr.jpg)
