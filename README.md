@@ -4,6 +4,9 @@
 ## Демонстрация на выставке «Территория NDT»
 ![](https://github.com/CepbluKot/roboticArm/blob/main/video.gif)
 
+## Диплом с выставки «Территория NDT»
+![](https://github.com/CepbluKot/roboticArm/blob/main/diploma_NDT.jpg)
+
 ## Конструкция
 ![](https://github.com/CepbluKot/roboticArm/blob/main/photo1687856753.jpeg)
 
