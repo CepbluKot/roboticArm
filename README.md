@@ -1,6 +1,6 @@
 Система управления манипулятором
 
-![Презентация](https://drive.google.com/file/d/1cKRX976KBxD_HUd96p9TGSsha-fylCqs/view?usp=sharing)
+[Презентация](https://drive.google.com/file/d/1cKRX976KBxD_HUd96p9TGSsha-fylCqs/view?usp=sharing)
 
 ## Демонстрация на выставке «Территория NDT»
 ![](https://github.com/CepbluKot/roboticArm/blob/main/video.gif)
