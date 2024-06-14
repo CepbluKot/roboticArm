@@ -17,6 +17,19 @@
 ## Пример работы в ROS
 ![](https://github.com/CepbluKot/roboticArm/blob/main/ROS-demo.gif)
 
+
+## Графический интерфейс
+
+![Вкладка управления](https://github.com/CepbluKot/roboticArm/blob/main/interface1.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface2.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface3.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface4.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface5.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface6.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface7.jpeg)
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface8.jpeg)
+
+
 Робот-манипулятор состоит из нескольких сервомоторов, управляемых через usb-can преобразователь, данные передаются по CAN-шине, применяется протокол CanOpen301
 
 Сервомоторы могут принимать команды и отсылать на них ответы, по которым можно понять дошла ли команда до сервомотора, какие параметры на нем выставлены, его текущее состояние (нарпяжение, температура, коды ошибок и тп)
