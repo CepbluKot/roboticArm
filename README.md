@@ -20,13 +20,20 @@
 
 ## Графический интерфейс
 
-![Вкладка управления](https://github.com/CepbluKot/roboticArm/blob/main/interface1.jpeg)
+Вкладка управления <br />
+![](https://github.com/CepbluKot/roboticArm/blob/main/interface1.jpeg)
+
+Вкладки с информацией о электродвигателях <br />
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface2.jpeg)
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface3.jpeg)
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface4.jpeg)
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface5.jpeg)
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface6.jpeg)
+
+Вкладка программы последовательности движений <br />
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface7.jpeg)
+
+Вкладка настроек электродвигателей <br />
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface8.jpeg)
 
 
