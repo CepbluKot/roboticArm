@@ -1,4 +1,4 @@
-Система управления манипулятором
+Система управления роботом-манипулятором
 
 [Презентация](https://drive.google.com/file/d/1cKRX976KBxD_HUd96p9TGSsha-fylCqs/view?usp=sharing)
 
