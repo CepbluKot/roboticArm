@@ -91,3 +91,6 @@ python3 main.py
 [Виталий Минасян - разработка конструкции](http://t.me/schwarzeseite) </br>
 
 
+## Дополнительные материалы
+
+[Документация к электромоторам](https://github.com/CepbluKot/roboticArm/blob/main/electrical_motor_documentation.pdf)
