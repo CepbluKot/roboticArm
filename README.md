@@ -83,7 +83,7 @@ pip3 install -r requirements.txt
 python3 main.py
 ```
 
-Для корректной работы требуется подключение к адаптеру usb-can <br />
+Для корректной работы требуется подключение к сревомотороам через адаптер usb-can <br />
 
 Для доступа к can-шине через usb используется такое устройство: https://aliexpress.ru/item/4000472388410.html?sku_id=10000001901640368 <br />
 ![](https://ae04.alicdn.com/kf/H6d02e323135b46718cabcc51bcb68b0fr.jpg)
