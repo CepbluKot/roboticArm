@@ -37,6 +37,10 @@
 ![](https://github.com/CepbluKot/roboticArm/blob/main/interface8.jpeg)
 
 
+## Демонстрация обмена данными 
+
+![](https://github.com/CepbluKot/roboticArm/blob/main/data_example.png) </br>
+
 ## UML диаграмма классов 
 
 ![](https://github.com/CepbluKot/roboticArm/blob/main/class_diagram.png) </br>
